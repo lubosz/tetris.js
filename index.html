@@ -145,6 +145,7 @@
     //                               0x44C0
     //
     //-------------------------------------------------------------------------
+    var foo = { size: 2, blocks: [0x0C00, 0x4400, 0x0C00, 0x4400], color: 'pink'   };
     var i = { size: 4, blocks: [0x0F00, 0x2222, 0x00F0, 0x4444], color: 'cyan'   };
     var j = { size: 3, blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20], color: 'blue'   };
     var l = { size: 3, blocks: [0x4460, 0x0E80, 0xC440, 0x2E00], color: 'orange' };
@@ -488,11 +489,11 @@
       	this.ctx.translate(0.5, 0.5); // for crisp 1px black lines
       	this.drawCourt();
       	this.drawNext();
-		this.drawHold();
+		    this.drawHold();
       	this.drawScore();
       	this.drawRows();
-		this.drawWins();
-		this.drawEnd();
+		    this.drawWins();
+		    this.drawEnd();
       	this.ctx.restore();
     }
 
@@ -501,7 +502,7 @@
       	if (this.invalid.court) 
       	{
         	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-			this.ctx.strokeStyle = 'white';
+			    this.ctx.strokeStyle = 'white';
          	this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
       		
 			var x, y, block;
@@ -592,7 +593,7 @@
       	this.eachblock(type, x, y, dir, function(x, y) 
       	{
         	drawBlock(ctx, x, y, dx, dy, type.color);
-     	});
+     	  });
     }
 
     Player.prototype.play = function() 
@@ -832,7 +833,8 @@
     	var pieces = [];
     	if (pieces.length == 0)
     	{
-        	pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
+    	    pieces = [foo,foo,foo,foo]
+        	///pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
     	}
       	var type = pieces.splice(random(0, pieces.length-1), 1)[0];
       	return { type: type, dir: DIR.UP, x: Math.round(nx/2 - 2), y: -2 };
