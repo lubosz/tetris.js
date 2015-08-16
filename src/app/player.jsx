@@ -41,15 +41,7 @@ constructor(playerNum)
     this.dx = 0;
     this.dy = 0;
     this.actions = [];
-    this.KEYs = 
-    {
-        ESC: 27,
-        SPACE: 32,
-        LEFT: 65,
-        UP: 87,
-        RIGHT: 68,
-        DOWN: 83
-    };
+    this.KEYs = {};
     this.invalid = {};
     this.wins = 0;
     this.hold = undefined,
@@ -663,6 +655,41 @@ setHold (piece)
 
         this.invalid.hold = true;
         this.holdUsed = true;
+    }
+}
+
+resize ()
+{
+        this.canvas.width = this.canvas.clientWidth; // set canvas logical size equal to its physical size
+        this.canvas.height = this.canvas.clientHeight; // (ditto)
+        this.ucanvas.width = this.ucanvas.clientWidth;
+        this.ucanvas.height = this.ucanvas.clientHeight;
+        this.hcanvas.width = this.hcanvas.clientWidth;
+        this.hcanvas.height = this.hcanvas.clientHeight;
+        this.invalid.court = true;
+        this.invalid.next = true;
+
+        this.dx = this.canvas.width / nx;      // pixel size of a single tetris block
+        this.dy = this.canvas.height / ny;     // (ditto)
+}
+
+reset() {
+        this.dt = 0;
+        this.clearActions();
+        this.clearBlocks();
+        this.clearRows();
+        this.clearScore();
+        this.setCurrentPiece(this.next);
+        this.setNextPiece();
+}
+
+update (idt) {
+    this.handle(this.actions.shift());
+    this.dt = this.dt + idt;
+    if (this.dt > this.step) 
+    {
+        this.dt = this.dt - this.step;
+        this.drop();
     }
 }
 

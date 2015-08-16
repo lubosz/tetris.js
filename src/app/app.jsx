@@ -216,10 +216,6 @@ function keydown(ev)
 // public game vars
 //-------------------------------------------------------------------------
 var playing = false;
-
-var dx;
-var dy;
-
 var Players = [];
 var gamepads = [];
 
@@ -262,21 +258,7 @@ if (!window.requestAnimationFrame)
     }
 }
 
-//-------------------------------------------------------------------------
-// GAME LOOP
-//-------------------------------------------------------------------------
-function run() 
-{
-    function canGame() 
-    {
-        return "getGamepads" in navigator;
-    }
-
-    if (canGame()) 
-    {
-        show('start');
-    }
-
+function initPlayers () {
     var Player1 = new Player(0);
 
     Player1.canvas = get('canvasP1');
@@ -326,6 +308,24 @@ function run()
 
     Players.push(Player1);
     Players.push(Player2);
+}
+
+function haveGamePads() 
+{
+        return "getGamepads" in navigator;
+}
+
+//-------------------------------------------------------------------------
+// GAME LOOP
+//-------------------------------------------------------------------------
+function run() 
+{
+    if (haveGamePads()) 
+    {
+        show('start');
+    }
+
+    initPlayers();
 
     addEvents(); // attach keydown and resize events
 
@@ -378,30 +378,12 @@ function addEvents()
     {
         gamepadHandler(e, false);
     }, false);
-
-
 }
 
 function resize(event) 
 {
-    for (var i = 0; i < Players.length; i++) 
-    {
-        Players[i].canvas.width = Players[i].canvas.clientWidth; // set canvas logical size equal to its physical size
-        Players[i].canvas.height = Players[i].canvas.clientHeight; // (ditto)
-        Players[i].ucanvas.width = Players[i].ucanvas.clientWidth;
-        Players[i].ucanvas.height = Players[i].ucanvas.clientHeight;
-        Players[i].hcanvas.width = Players[i].hcanvas.clientWidth;
-        Players[i].hcanvas.height = Players[i].hcanvas.clientHeight;
-        Players[i].invalid.court = true;
-        Players[i].invalid.next = true;
-    }
-    dx = Players[0].canvas.width / nx;      // pixel size of a single tetris block
-    dy = Players[0].canvas.height / ny;     // (ditto)
-
-    for (var i = 0; i < Players.length; i++) {
-        Players[i].dx = dx;     // (ditto)
-        Players[i].dy = dy;
-    }
+    for (var i = 0; i < Players.length; i++)
+        Players[i].resize();
 }
 
 //-------------------------------------------------------------------------
@@ -411,15 +393,7 @@ function resize(event)
 function reset() 
 {
     for (var i = 0; i < Players.length; i++) 
-    {
-        Players[i].dt = 0;
-        Players[i].clearActions();
-        Players[i].clearBlocks();
-        Players[i].clearRows();
-        Players[i].clearScore();
-        Players[i].setCurrentPiece(Players[i].next);
-        Players[i].setNextPiece();
-    }
+        Players[i].reset();
 }
 
 function update(idt) 
@@ -427,15 +401,7 @@ function update(idt)
     handleGamePadAction();
     if (playing) {
         for (var i = 0; i < Players.length; i++) 
-        {
-            Players[i].handle(Players[i].actions.shift());
-            Players[i].dt = Players[i].dt + idt;
-            if (Players[i].dt > Players[i].step) 
-            {
-                Players[i].dt = Players[i].dt - Players[i].step;
-                Players[i].drop();
-            }
-        }
+            Players[i].update(idt);
     }
 }
 
