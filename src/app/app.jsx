@@ -1,6 +1,6 @@
 import {Player, UserInterface} from './player.jsx';
 import {DIR, nx, ny} from './game.jsx';
-import {get, timestamp, show} from './utils.jsx';
+import {get, timestamp, show, hide} from './utils.jsx';
 var GeneralKEYs = 
 {
     ESC: 27,
@@ -225,15 +225,6 @@ function loseCb (player) {
 
 function initPlayers () {
     var Player1 = new Player(0);
-
-    Player1.canvas = get('canvasP1');
-    Player1.ucanvas = get('upcomingP1');
-    Player1.hcanvas = get('holdP1');
-    Player1.ctx = Player1.canvas.getContext('2d');
-    Player1.uctx = Player1.ucanvas.getContext('2d');
-    Player1.hctx = Player1.hcanvas.getContext('2d');
-
-    Player1.ui = new UserInterface('scoreP1','rowsP1','winsP1','endP1');
     //player 1 KEYs: left_arrow, up_arrow, right_arrow, down_arrow, o, p, i
     Player1.KEYs = 
     {
@@ -247,13 +238,6 @@ function initPlayers () {
     };
 
     var Player2 = new Player(1);
-    Player2.canvas = get('canvasP2');
-    Player2.ucanvas = get('upcomingP2');
-    Player2.hcanvas = get('holdP2');
-    Player2.ctx = Player2.canvas.getContext('2d');
-    Player2.uctx = Player2.ucanvas.getContext('2d');
-    Player2.hctx = Player2.hcanvas.getContext('2d');
-    Player2.ui = new UserInterface('scoreP2','rowsP2','winsP2','endP2');
     //player 2 KEYs: w, a, s, d, q, e, r
     Player2.KEYs = 
     {

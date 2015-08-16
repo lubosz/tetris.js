@@ -74,6 +74,20 @@ constructor(playerNum)
         min: 0.1
     }; // how long before piece drops by 1 row (seconds)
 
+    let playerStr = "P" + String(playerNum+1);
+    this.canvas = get('canvas' + playerStr);
+    this.ucanvas = get('upcoming' + playerStr);
+    this.hcanvas = get('hold' + playerStr);
+    this.ctx = this.canvas.getContext('2d');
+    this.uctx = this.ucanvas.getContext('2d');
+    this.hctx = this.hcanvas.getContext('2d');
+
+    this.ui = new UserInterface(
+        'score' + playerStr,
+        'rows' + playerStr,
+        'wins' + playerStr,
+        'end' + playerStr);
+
     //gamepad timestamp variables
     this.lastCall = {};
     this.lastCall.arrow_down = 0;
