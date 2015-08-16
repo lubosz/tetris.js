@@ -255,6 +255,21 @@ if (!window.requestAnimationFrame)
     }
 }
 
+function loseCb (player) {
+
+    player.setEnd('LOSE');
+
+    for (var i = 0; i < Players.length; i++)
+    {
+        if (Players[i] != this)
+        {
+            Players[i].setEnd('WIN');
+            Players[i].incrWins();
+        }
+    }
+    playing = false;
+}
+
 function initPlayers () {
     var Player1 = new Player(0);
 
@@ -302,6 +317,11 @@ function initPlayers () {
         TURNRIGHT: 69,
         HOLD: 82
     };
+
+    Player1.setOpponent(Player2);
+    Player2.setOpponent(Player1);
+    Player1.setLoseCallback(loseCb);
+    Player2.setLoseCallback(loseCb);
 
     Players.push(Player1);
     Players.push(Player2);

@@ -377,15 +377,14 @@ removeLine (n)
     }
 }
 
+setOpponent(player)
+{
+    this.opponent = player;
+}
+
 addOpponentLines (n) 
 {
-    //select opponent to receive lines
-    var oppNum = this.playerNum + 1;
-    if (oppNum >= Players.length) 
-    {
-        oppNum = 0;
-    }
-    Players[oppNum].receiveLines(n);
+    this.opponent.receiveLines(n);
 }
 
 receiveLines (n) 
@@ -540,29 +539,22 @@ play ()
     this.playing = true;
 }
 
+setLoseCallback(loseCb)
+{
+    this.loseCb = loseCb;
+}
+
 lose ()
 {
-    this.setEnd('LOSE');
-
-    for (var i = 0; i < Players.length; i++)
-    {
-        Players[i].playing = false;
-        Players[i].setScore();
-
-        if (Players[i] != this)
-        {
-            Players[i].setEnd('WIN');
-            Players[i].incrWins();
-        }
-    }
-
-    playing = false;
+    this.loseCb(this);
 }
 
 setEnd (win)
 {
     this.end = win;
+    this.setScore();
     this.invalid.end = true;
+    this.playing = false;
 }
 
 setScore (n)
