@@ -229,19 +229,6 @@ function timestamp()
     return new Date().getTime();
 }
 
-if (!window.requestAnimationFrame) 
-{
-    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-    window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function (callback, element) 
-    {
-        window.setTimeout(callback, 1000 / 60);
-    }
-}
-
 function loseCb (player) {
 
     player.setEnd('LOSE');
@@ -319,25 +306,25 @@ function haveGamePads()
 //-------------------------------------------------------------------------
 function run() 
 {
+    var last = timestamp();
+    var now = timestamp();
+
     if (haveGamePads()) 
-    {
         show('start');
-    }
 
     initPlayers();
 
-    addEvents(); // attach keydown and resize events
+    // attach keydown and resize events
+    addEvents(); 
 
-    var last = timestamp();
-    var now = timestamp();
     function frame() 
     {
         now = timestamp();
-        update(Math.min(1, (now - last) / 1000.0)); // using requestAnimationFrame have to be able to handle large delta's caused when it 'hibernates' in a background or non-visible tab
+        // using requestAnimationFrame have to be able to handle large delta's caused
+        // when it 'hibernates' in a background or non-visible tab
+        update(Math.min(1, (now - last) / 1000.0)); 
         for (var i = 0; i < Players.length; i++) 
-        {
             Players[i].draw();
-        }
         last = now;
         //actualize gamepads
         gamepads = navigator.getGamepads();
@@ -380,10 +367,6 @@ function resize(event)
         Players[i].resize();
 }
 
-//-------------------------------------------------------------------------
-// GAME LOGIC
-//-------------------------------------------------------------------------
-
 function reset() 
 {
     for (var i = 0; i < Players.length; i++) 
@@ -396,6 +379,19 @@ function update(idt)
     if (playing) {
         for (var i = 0; i < Players.length; i++) 
             Players[i].update(idt);
+    }
+}
+
+if (!window.requestAnimationFrame) 
+{
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function (callback, element) 
+    {
+        window.setTimeout(callback, 1000 / 60);
     }
 }
 
