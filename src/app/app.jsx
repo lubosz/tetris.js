@@ -1062,8 +1062,22 @@ function setBlock(x, y, blocks, type)
 
 function addEvents() 
 {
-    document.addEventListener('keydown', keydown, false);
-    window.addEventListener('resize', resize, false);
+    window.addEventListener('keydown', keydown);
+    window.addEventListener('resize', resize);
+    //window.addEventListener("MozGamepadButtonUp", function(e) { console.log(e); }, false);
+    //window.addEventListener("MozGamepadButtonDown", buttonHandler);
+    //initialize gamepad listener (functions implemented in inputhandle.js)
+    window.addEventListener("gamepadconnected", function (e) 
+    {
+        gamepadHandler(e, true);
+    }, false);
+
+    window.addEventListener("gamepaddisconnected", function (e) 
+    {
+        gamepadHandler(e, false);
+    }, false);
+
+
 }
 
 function resize(event) 
@@ -1083,16 +1097,6 @@ function resize(event)
     dy = Players[0].canvas.height / ny;     // (ditto)
 }
 
-//initialize gamepad listener (functions implemented in inputhandle.js)
-window.addEventListener("gamepadconnected", function (e) 
-{
-    gamepadHandler(e, true);
-}, false);
-
-window.addEventListener("gamepaddisconnected", function (e) 
-{
-    gamepadHandler(e, false);
-}, false);
 
 //-------------------------------------------------------------------------
 // GAME LOGIC
