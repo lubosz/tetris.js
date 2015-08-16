@@ -8,8 +8,6 @@ function get(id)
     return document.getElementById(id);
 }
 
-
-
 function html(id, html) 
 {
     get(id).innerHTML = html;
@@ -30,12 +28,14 @@ function setBlock(x, y, blocks, type)
     return blocks;
 }
 
-
 //-------------------------------------------------
 // This is the Player class containing all Player's
 // Informations
 //-------------------------------------------------
-export function Player(playerNum) 
+export class Player {
+
+
+constructor(playerNum) 
 {
     this.score = 0;
     this.dx = 0;
@@ -74,7 +74,7 @@ export function Player(playerNum)
     this.lastCall.r1 = 0;
 }
 
-Player.prototype.eachblock = function (type, x, y, dir, fn) 
+eachblock (type, x, y, dir, fn) 
 {
     //---------------------------------------------------
     // do the bit manipulation and iterate through each
@@ -102,7 +102,7 @@ Player.prototype.eachblock = function (type, x, y, dir, fn)
 //-----------------------------------------------------
 // check if a piece can fit into a position in the grid
 //-----------------------------------------------------
-Player.prototype.occupied = function (type, x, y, dir) 
+occupied (type, x, y, dir) 
 {
     var result = false
     var actualBlocks = this.blocks;
@@ -117,7 +117,7 @@ Player.prototype.occupied = function (type, x, y, dir)
     return result;
 }
 
-Player.prototype.puyuoccupied = function (type, x, y, dir) 
+puyuoccupied (type, x, y, dir) 
 {
     var result = undefined;
     var actualBlocks = this.blocks;
@@ -143,12 +143,12 @@ Player.prototype.puyuoccupied = function (type, x, y, dir)
     return result;
 }
 
-Player.prototype.unoccupied = function (type, x, y, dir) 
+unoccupied (type, x, y, dir) 
 {
     return !this.occupied(type, x, y, dir);
 }
 
-Player.prototype.handle = function (action) 
+handle (action) 
 {
     switch (action) 
     {
@@ -176,7 +176,7 @@ Player.prototype.handle = function (action)
     }
 }
 
-Player.prototype.move = function (dir) 
+move (dir) 
 {
     var x = this.current.x,
         y = this.current.y;
@@ -205,7 +205,7 @@ Player.prototype.move = function (dir)
     }
 }
 
-Player.prototype.rotate = function (dir) 
+rotate (dir) 
 {
     if (DIR.TURNRIGHT == dir) 
     {
@@ -237,7 +237,7 @@ Player.prototype.rotate = function (dir)
     }
 }
 
-Player.prototype.instantDrop = function () 
+instantDrop () 
 {
     var flying = this.move(DIR.DOWN)
     while (flying) 
@@ -257,7 +257,7 @@ Player.prototype.instantDrop = function ()
     }
 }
 
-Player.prototype.puyuGravityDrop = function () 
+puyuGravityDrop () 
 {
     var flying = this.move(DIR.DOWN)
 
@@ -286,7 +286,7 @@ Player.prototype.puyuGravityDrop = function ()
     }
 }
 
-Player.prototype.drop = function () 
+drop () 
 {
     if (!this.move(DIR.DOWN)) 
     {
@@ -303,7 +303,7 @@ Player.prototype.drop = function ()
     }
 }
 
-Player.prototype.dropPiece = function () 
+dropPiece () 
 {
     var type = this.current.type;
     var playerBlocks = this.blocks;
@@ -333,7 +333,7 @@ Player.prototype.dropPiece = function ()
     }
 }
 
-Player.prototype.removeLines = function () 
+removeLines () 
 {
     var x, y, complete, n = 0;
     for (y = ny; y > 0; --y) 
@@ -373,7 +373,7 @@ Player.prototype.removeLines = function ()
     }
 }
 
-Player.prototype.removeLine = function (n) 
+removeLine (n) 
 {
     var x, y;
     for (y = n; y >= 0; --y) 
@@ -385,7 +385,7 @@ Player.prototype.removeLine = function (n)
     }
 }
 
-Player.prototype.addOpponentLines = function (n) 
+addOpponentLines (n) 
 {
     //select opponent to receive lines
     var oppNum = this.playerNum + 1;
@@ -396,7 +396,7 @@ Player.prototype.addOpponentLines = function (n)
     Players[oppNum].receiveLines(n);
 }
 
-Player.prototype.receiveLines = function (n) 
+receiveLines (n) 
 {
     var gap = 0;
     gap = Math.floor(Math.random() * nx);
@@ -427,7 +427,7 @@ Player.prototype.receiveLines = function (n)
     }
 }
 
-Player.prototype.draw = function () 
+draw () 
 {
     this.ctx.save();
     this.ctx.lineWidth = 1;
@@ -442,7 +442,7 @@ Player.prototype.draw = function ()
     this.ctx.restore();
 }
 
-Player.prototype.drawCourt = function () 
+drawCourt () 
 {
     if (this.invalid.court) 
     {
@@ -467,7 +467,7 @@ Player.prototype.drawCourt = function ()
     }
 }
 
-Player.prototype.drawNext = function () 
+drawNext () 
 {
     if (this.invalid.next) 
     {
@@ -482,7 +482,7 @@ Player.prototype.drawNext = function ()
     }
 }
 
-Player.prototype.drawHold = function () 
+drawHold () 
 {
     if (this.invalid.hold) 
     {
@@ -497,7 +497,7 @@ Player.prototype.drawHold = function ()
     }
 }
 
-Player.prototype.drawScore = function () 
+drawScore () 
 {
     if (this.invalid.score) 
     {
@@ -506,7 +506,7 @@ Player.prototype.drawScore = function ()
     }
 }
 
-Player.prototype.drawRows = function () 
+drawRows () 
 {
     if (this.invalid.rows) 
     {
@@ -515,7 +515,7 @@ Player.prototype.drawRows = function ()
     }
 }
 
-Player.prototype.drawWins = function () 
+drawWins () 
 {
     if (this.invalid.wins) 
     {
@@ -524,7 +524,7 @@ Player.prototype.drawWins = function ()
     }
 }
 
-Player.prototype.drawEnd = function () 
+drawEnd () 
 {
     if (this.invalid.end) 
     {
@@ -533,7 +533,7 @@ Player.prototype.drawEnd = function ()
     }
 }
 
-Player.prototype.drawPiece = function (ctx, type, x, y, dir)
+drawPiece (ctx, type, x, y, dir)
 {
     var dx = this.dx;
     var dy = this.dy;
@@ -543,12 +543,12 @@ Player.prototype.drawPiece = function (ctx, type, x, y, dir)
     });
 }
 
-Player.prototype.play = function () 
+play () 
 {
     this.playing = true;
 }
 
-Player.prototype.lose = function ()
+lose ()
 {
     this.setEnd('LOSE');
 
@@ -567,78 +567,78 @@ Player.prototype.lose = function ()
     playing = false;
 }
 
-Player.prototype.setEnd = function(win)
+setEnd (win)
 {
     this.end = win;
     this.invalid.end = true;
 }
 
-Player.prototype.setScore = function (n)
+setScore (n)
 {
     this.score = n;
     this.score = n || this.score;
     this.invalid.score = true;
 }
 
-Player.prototype.addScore = function (n)
+addScore (n)
 {
     this.score = this.score + n;
 }
 
-Player.prototype.clearScore = function ()
+clearScore ()
 {
     this.setScore(0);
 }
 
-Player.prototype.clearRows = function ()
+clearRows ()
 {
     this.setRows(0);
 }
 
-Player.prototype.setRows = function (n) 
+setRows (n) 
 {
     this.rows = n;
     this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.rows));
     this.invalid.rows = true;
 }
 
-Player.prototype.incrWins = function () 
+incrWins () 
 {
     this.wins++;
     this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.wins));
     this.invalid.wins = true;
 }
 
-Player.prototype.addRows = function (n) 
+addRows (n) 
 {
     this.setRows(this.rows + n);
 }
 
-Player.prototype.clearBlocks = function () 
+clearBlocks () 
 {
     this.blocks = [];
     this.invalid.court = true;
 }
 
-Player.prototype.clearActions = function () 
+clearActions () 
 {
     this.actions = [];
 }
 
-Player.prototype.setCurrentPiece = function (piece) 
+setCurrentPiece (piece) 
 {
     this.current = piece || randomPiece();
     this.invalid.court = true;
     this.holdUsed = false;
 }
 
-Player.prototype.setNextPiece = function (piece) 
+setNextPiece (piece) 
 {
     this.next = piece || randomPiece();
     this.invalid.next = true;
 }
 
-Player.prototype.setHold = function (piece) 
+setHold (piece) 
 {
     if (!this.holdUsed) 
     {
@@ -666,4 +666,5 @@ Player.prototype.setHold = function (piece)
     }
 }
 
+}
 export default Player;
