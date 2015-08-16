@@ -17,6 +17,31 @@ function setBlock(x, y, blocks, type)
     return blocks;
 }
 
+function eachblock (type, x, y, dir, fn) 
+{
+    //---------------------------------------------------
+    // do the bit manipulation and iterate through each
+    // occupied block (x,y) for a given piece applying fn
+    //---------------------------------------------------
+    var bit, result, row = 0,
+        col = 0,
+        blocks = type.blocks[dir];
+
+
+    for (bit = 0x8000; bit > 0; bit = bit >> 1) 
+    {
+        if (blocks & bit) 
+        {
+            fn(x + col, y + row);
+        }
+        if (++col === 4) 
+        {
+            col = 0;
+            ++row;
+        }
+    }
+}
+
 export class UserInterface {
     constructor(scoreView, rowsView, winsView, endView) {
         this.scoreView = scoreView;
@@ -99,31 +124,6 @@ constructor(playerNum)
     this.lastCall.r1 = 0;
 }
 
-eachblock (type, x, y, dir, fn) 
-{
-    //---------------------------------------------------
-    // do the bit manipulation and iterate through each
-    // occupied block (x,y) for a given piece applying fn
-    //---------------------------------------------------
-    var bit, result, row = 0,
-        col = 0,
-        blocks = type.blocks[dir];
-
-
-    for (bit = 0x8000; bit > 0; bit = bit >> 1) 
-    {
-        if (blocks & bit) 
-        {
-            fn(x + col, y + row);
-        }
-        if (++col === 4) 
-        {
-            col = 0;
-            ++row;
-        }
-    }
-}
-
 //-----------------------------------------------------
 // check if a piece can fit into a position in the grid
 //-----------------------------------------------------
@@ -132,7 +132,7 @@ occupied (type, x, y, dir)
     var result = false
     var actualBlocks = this.blocks;
 
-    this.eachblock(type, x, y, dir, function (x, y) 
+    eachblock(type, x, y, dir, function (x, y) 
     {
         if ((x < 0) || (x >= nx) || (y >= ny) || (actualBlocks && actualBlocks[x] ? actualBlocks[x][y] : null)) 
         {
@@ -147,7 +147,7 @@ puyuoccupied (type, x, y, dir)
     var result = undefined;
     var actualBlocks = this.blocks;
 
-    this.eachblock(type, x, y+1, dir, function (x, y) 
+    eachblock(type, x, y+1, dir, function (x, y) 
     {
         if (!((x < 0) || (x >= nx) || (y >= ny) || (actualBlocks && actualBlocks[x] ? actualBlocks[x][y] : null))) 
         {
@@ -334,7 +334,7 @@ dropPiece ()
     var playerBlocks = this.blocks;
     var inval = false;
 
-        this.eachblock(this.current.type, this.current.x, this.current.y, this.current.dir, function (x, y) 
+        eachblock(this.current.type, this.current.x, this.current.y, this.current.dir, function (x, y) 
         {
             inval = true;
             playerBlocks = setBlock(x, y, playerBlocks, type);
@@ -521,7 +521,7 @@ drawPiece (ctx, type, x, y, dir)
 {
     var dx = this.dx;
     var dy = this.dy;
-    this.eachblock(type, x, y, dir, function (x, y)
+    eachblock(type, x, y, dir, function (x, y)
     {
         drawBlock(ctx, x, y, dx, dy, type.color);
     });
