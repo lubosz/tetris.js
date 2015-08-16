@@ -1,3 +1,30 @@
+//-------------------------------------------------------------------------
+// public game vars
+//-------------------------------------------------------------------------
+var playing = false;
+//set to "puyp" or "tetris"
+var mode = "puyu";
+var nx = 10; 	// width of tetris court (in blocks)
+var ny = 20; 	// height of tetris court (in blocks)
+var nu = 5; 	// width/height of upcoming preview (in blocks)
+var puyucolors = ['cyan','yellow','green','red','purple'];
+
+var DIR = 
+{
+	UP: 0,
+	RIGHT: 1,
+	DOWN: 2,
+	LEFT: 3,
+	MIN: 0,
+	MAX: 3,
+	TURNLEFT: 4,
+	TURNRIGHT: 5,
+	HOLD: 6
+};
+
+var Players = [];
+var gamepads = [];
+
 function canGame() 
 {
 	return "getGamepads" in navigator;
@@ -69,12 +96,6 @@ if (!window.requestAnimationFrame)
 //							   0x44C0
 //
 //-------------------------------------------------------------------------
-var foo = 
-{
-	size: 2,
-	blocks: [0x0C00, 0x4400, 0x0C00, 0x4400],
-	color: 'pink'
-};
 var i = 
 {
 	size: 4,
@@ -118,6 +139,32 @@ var z =
 	color: 'red'
 };
 
+function getRandomPuyuColor()
+{
+	return puyucolors[Math.floor(Math.random() * puyucolors.length)];
+}
+
+function randomPiece() 
+{
+	var type;
+	if(mode == "puyu")
+	{ 
+		type = 
+		{
+			size: 2,
+			blocks: [0x0C00, 0x4400, 0x0C00, 0x4400],
+			color: getRandomPuyuColor(), 
+			color2: getRandomPuyuColor()
+		}
+	}
+	else if(mode == "tetris")
+	{
+		var pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
+	    type = pieces.splice(random(0, pieces.length-1), 1)[0];
+	}
+	return {type: type, dir: DIR.UP, x: Math.round(nx / 2 - 2), y: -2};
+}
+
 //-------------------------------------------------
 // This is the Player class containing all Player's
 // Informations
@@ -148,6 +195,7 @@ function Player(playerNum)
 		min: 0.1
 	}; // how long before piece drops by 1 row (seconds)
 
+	//gamepad timestamp variables
 	this.lastCall = {};
 	this.lastCall.arrow_down = timestamp();
 	this.lastCall.arrow_left = timestamp();
@@ -196,6 +244,32 @@ Player.prototype.occupied = function (type, x, y, dir)
 		if ((x < 0) || (x >= nx) || (y >= ny) || (actualBlocks && actualBlocks[x] ? actualBlocks[x][y] : null)) 
 		{
 			result = true;
+		}
+	});
+	return result;
+}
+
+Player.prototype.puyuoccupied = function (type, x, y, dir) 
+{
+	var result = undefined;
+	var actualBlocks = this.blocks;
+
+	this.eachblock(type, x, y+1, dir, function (x, y) 
+	{
+		if (!((x < 0) || (x >= nx) || (y >= ny) || (actualBlocks && actualBlocks[x] ? actualBlocks[x][y] : null))) 
+		{
+			result = 
+			{
+				type: type = 
+				{
+					size: 1,
+					blocks: [0x8000, 0x8000, 0x8000, 0x8000],
+					color: "yellow"
+				}, 
+				dir: DIR.UP, 
+				x: x, 
+				y: y-1
+			};
 		}
 	});
 	return result;
@@ -315,6 +389,34 @@ Player.prototype.instantDrop = function ()
 	}
 }
 
+Player.prototype.puyuGravityDrop = function () 
+{
+	var flying = this.move(DIR.DOWN)
+
+	var last = now = timestamp();
+
+	while (flying) 
+	{
+		now = timestamp();
+		var deltatime = now - last;
+		if(deltatime > 100)
+		{
+			flying = this.move(DIR.DOWN);
+		}
+	}
+
+	this.addScore(10);
+	this.dropPiece();
+	this.removeLines();
+	this.setCurrentPiece(this.next);
+	this.setNextPiece(randomPiece());
+	this.clearActions();
+	if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) 
+	{
+		this.lose();
+	}
+}
+
 Player.prototype.drop = function () 
 {
 	if (!this.move(DIR.DOWN)) 
@@ -337,16 +439,28 @@ Player.prototype.dropPiece = function ()
 	var type = this.current.type;
 	var playerBlocks = this.blocks;
 	var inval = false;
-	this.eachblock(this.current.type, this.current.x, this.current.y, this.current.dir, function (x, y) 
-	{
-		inval = true;
-		playerBlocks = setBlock(x, y, playerBlocks, type);
-	});
-	this.blocks = playerBlocks;
 
-	if (inval) 
+		this.eachblock(this.current.type, this.current.x, this.current.y, this.current.dir, function (x, y) 
+		{
+			inval = true;
+			playerBlocks = setBlock(x, y, playerBlocks, type);
+		});
+		this.blocks = playerBlocks;
+
+		if (inval) 
+		{
+			this.invalid.court = true;
+		}
+
+	if(mode == "puyu")
 	{
-		this.invalid.court = true;
+		//check if a bean is still falling
+		var fallingBean = this.puyuoccupied(this.current.type, this.current.x, this.current.y, this.current.dir);
+		if( fallingBean != undefined)
+		{
+			this.current = fallingBean;
+			this.puyuGravityDrop();
+		}
 	}
 }
 
@@ -390,7 +504,8 @@ Player.prototype.removeLines = function ()
 	}
 }
 
-Player.prototype.removeLine = function (n) {
+Player.prototype.removeLine = function (n) 
+{
 	var x, y;
 	for (y = n; y >= 0; --y) 
 	{
@@ -466,7 +581,7 @@ Player.prototype.drawCourt = function ()
 		this.ctx.strokeStyle = 'white';
 		this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
 
-		var x, y, block;
+		var x, y, block; 
 		for (y = 0; y < ny; y++) 
 		{
 			for (x = 0; x < nx; x++) 
@@ -517,7 +632,7 @@ Player.prototype.drawScore = function ()
 {
 	if (this.invalid.score) 
 	{
-		html(this.scoreView, ("00000" + Math.floor(this.vscore)).slice(-5));
+		html(this.scoreView, ("00000" + Math.floor(this.score)).slice(-5));
 		this.invalid.score = false;
 	}
 }
@@ -549,9 +664,9 @@ Player.prototype.drawEnd = function ()
 	}
 }
 
-Player.prototype.drawPiece = function (ctx, type, x, y, dir) 
+Player.prototype.drawPiece = function (ctx, type, x, y, dir)
 {
-	this.eachblock(type, x, y, dir, function (x, y) 
+	this.eachblock(type, x, y, dir, function (x, y)
 	{
 		drawBlock(ctx, x, y, dx, dy, type.color);
 	});
@@ -562,16 +677,16 @@ Player.prototype.play = function ()
 	this.playing = true;
 }
 
-Player.prototype.lose = function () 
+Player.prototype.lose = function ()
 {
 	this.setEnd('LOSE');
 
-	for (var i = 0; i < Players.length; i++) 
+	for (var i = 0; i < Players.length; i++)
 	{
 		Players[i].playing = false;
 		Players[i].setVisualScore();
 
-		if (Players[i] != this) 
+		if (Players[i] != this)
 		{
 			Players[i].setEnd('WIN');
 			Players[i].incrWins();
@@ -581,29 +696,30 @@ Player.prototype.lose = function ()
 	playing = false;
 }
 
-Player.prototype.setVisualScore = function (n) 
+Player.prototype.setEnd = function(win)
 {
-	this.vscore = n || this.score;
+	this.end = win;
+	this.invalidateEnd();
+}
+
+Player.prototype.setScore = function (n)
+{
+	this.score = n;
+	this.score = n || this.score;
 	this.invalid.score = true;
 }
 
-Player.prototype.setScore = function (n) 
-{
-	this.score = n;
-	this.setVisualScore(n);
-}
-
-Player.prototype.addScore = function (n) 
+Player.prototype.addScore = function (n)
 {
 	this.score = this.score + n;
 }
 
-Player.prototype.clearScore = function () 
+Player.prototype.clearScore = function ()
 {
 	this.setScore(0);
 }
 
-Player.prototype.clearRows = function () 
+Player.prototype.clearRows = function ()
 {
 	this.setRows(0);
 }
@@ -695,7 +811,7 @@ function run()
 	}
 
 	var Player1 = new Player(0);
-	//Player1.gamepad = new Gamepad();
+
 	Player1.canvas = get('canvasP1');
 	Player1.ucanvas = get('upcomingP1');
 	Player1.hcanvas = get('holdP1');
@@ -719,7 +835,6 @@ function run()
 	};
 
 	var Player2 = new Player(1);
-	//Player2.gamepad = new Gamepad();
 	Player2.canvas = get('canvasP2');
 	Player2.ucanvas = get('upcomingP2');
 	Player2.hcanvas = get('holdP2');
@@ -795,22 +910,6 @@ function setBlock(x, y, blocks, type)
 	return blocks;
 }
 
-function randomPiece() 
-{
-	//-----------------------------------------
-	// start with 4 instances of each piece and
-	// pick randomly until the 'bag is empty'
-	//-----------------------------------------
-	var pieces = [];
-	if (pieces.length == 0) 
-	{
-		pieces = [foo, foo, foo, foo]
-		///pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
-	}
-	var type = pieces.splice(random(0, pieces.length - 1), 1)[0];
-	return {type: type, dir: DIR.UP, x: Math.round(nx / 2 - 2), y: -2};
-}
-
 function addEvents() 
 {
 	document.addEventListener('keydown', keydown, false);
@@ -830,10 +929,11 @@ function resize(event)
 		Players[i].invalid.court = true;
 		Players[i].invalid.next = true;
 	}
-	dx = Players[0].canvas.width / nx; // pixel size of a single tetris block
-	dy = Players[0].canvas.height / ny; // (ditto)
+	dx = Players[0].canvas.width / nx;		// pixel size of a single tetris block
+	dy = Players[0].canvas.height / ny;		// (ditto)
 }
 
+//initialize gamepad listener (functions implemented in inputhandle.js)
 window.addEventListener("gamepadconnected", function (e) 
 {
 	gamepadHandler(e, true);
@@ -844,116 +944,9 @@ window.addEventListener("gamepaddisconnected", function (e)
 	gamepadHandler(e, false);
 }, false);
 
-var gamepads = {};
-
-function gamepadHandler(event, connecting) 
-{
-	var gamepad = event.gamepad;
-	// Note:
-	// gamepad === navigator.getGamepads()[gamepad.index]
-
-	if (connecting) 
-	{
-		if (gamepad.index == 0) 
-		{
-			show('connGP_P1');
-		}
-		if (gamepad.index == 1) 
-		{
-			show('connGP_P2');
-		}
-		gamepads[gamepad.index] = gamepad;
-	} 
-	else 
-	{
-		delete gamepads[gamepad.index];
-	}
-}
-
-function keydown(ev) 
-{
-	var handled = false;
-	if (playing) 
-	{
-		for (var i = 0; i < Players.length; i++) 
-		{
-			switch (ev.keyCode) 
-			{
-				case Players[i].KEYs.LEFT:
-					Players[i].actions.push(DIR.LEFT);
-					handled = true;
-					break;
-				case Players[i].KEYs.RIGHT:
-					Players[i].actions.push(DIR.RIGHT);
-					handled = true;
-					break;
-				case Players[i].KEYs.UP:
-					Players[i].actions.push(DIR.UP);
-					handled = true;
-					break;
-				case Players[i].KEYs.DOWN:
-					Players[i].actions.push(DIR.DOWN);
-					handled = true;
-					break;
-				case Players[i].KEYs.TURNLEFT:
-					Players[i].actions.push(DIR.TURNLEFT);
-					handled = true;
-					break;
-				case Players[i].KEYs.TURNRIGHT:
-					Players[i].actions.push(DIR.TURNRIGHT);
-					handled = true;
-					break;
-				case Players[i].KEYs.HOLD:
-					Players[i].actions.push(DIR.HOLD);
-					handled = true;
-					break;
-				case 37:
-					Players[i].actions.push(DIR.UP);
-					handled = true;
-					break;
-				case GeneralKEYs.ESC:
-					Players[i].lose();
-					handled = true;
-					break;
-			}
-		}
-	} else if (ev.keyCode == GeneralKEYs.SPACE) 
-	{
-		play();
-		handled = true;
-	}
-	if (handled) 
-	{
-		ev.preventDefault(); // prevent arrow keys from scrolling the page (supported in IE9+ and all other browsers)
-	}
-}
-
 //-------------------------------------------------------------------------
 // GAME LOGIC
 //-------------------------------------------------------------------------
-var playing = false;
-var nx = 10; // width of tetris court (in blocks)
-var ny = 20; // height of tetris court (in blocks)
-var nu = 5; // width/height of upcoming preview (in blocks)
-var DIR = 
-{
-	UP: 0,
-	RIGHT: 1,
-	DOWN: 2,
-	LEFT: 3,
-	MIN: 0,
-	MAX: 3,
-	TURNLEFT: 4,
-	TURNRIGHT: 5,
-	HOLD: 6
-};
-var GeneralKEYs = 
-{
-	ESC: 27,
-	SPACE: 32
-};
-var Players = [];
-var gamepads = [];
 
 function reset() 
 {
@@ -969,132 +962,12 @@ function reset()
 	}
 }
 
-var deltaTick = 200;
-
-function handleGamePadAction() 
-{
-	for (var i = 0; i < gamepads.length; i++) 
-	{
-		var gp = gamepads[i];
-
-		if (gp != undefined) {
-
-			if (!playing && gp.buttons[0] != undefined && gp.buttons[0].pressed) 
-			{
-				//x pressed
-				play();
-			}
-
-			//two gamepads fix
-			if (gp.buttons[13] != undefined && gp.buttons[13].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.arrow_down > deltaTick) 
-				{
-					//arrow down *verified*
-					Players[i].actions.push(DIR.DOWN);
-					Players[i].lastCall.arrow_down = timestamp();
-				}
-			}
-
-			if (gp.buttons[14] != undefined && gp.buttons[14].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.arrow_left > deltaTick) 
-				{
-					//arrow left *verified*
-					Players[i].actions.push(DIR.LEFT);
-					Players[i].lastCall.arrow_left = timestamp();
-				}
-			}
-
-			if (gp.buttons[15] != undefined && gp.buttons[15].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.arrow_right > deltaTick) 
-				{
-					//arrow right *verified*
-					Players[i].actions.push(DIR.RIGHT);
-					Players[i].lastCall.arrow_right = timestamp();
-				}
-			}
-
-			if (gp.buttons[12] != undefined && gp.buttons[12].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.arrow_up > deltaTick) 
-				{
-					//arrow up *verified*
-					Players[i].actions.push(DIR.UP);
-					Players[i].lastCall.arrow_up = timestamp();
-				}
-			}
-
-			if (gp.buttons[0] != undefined && gp.buttons[0].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.x > deltaTick) 
-				{
-					//x *verified*
-					Players[i].actions.push(DIR.TURNLEFT);
-					Players[i].lastCall.x = timestamp();
-				}
-			}
-
-			if (gp.buttons[1] != undefined && gp.buttons[1].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.o > deltaTick) 
-				{
-					//'o' *verified*
-					Players[i].actions.push(DIR.TURNRIGHT);
-					Players[i].lastCall.o = timestamp();
-				}
-			}
-
-			if (gp.buttons[2] != undefined && gp.buttons[2].pressed) 
-			{
-				//square *verified*
-			}
-
-			if (gp.buttons[3] != undefined && gp.buttons[3].pressed) 
-			{
-				//'triangle' *verified*
-			}
-
-			if (gp.buttons[4] != undefined && gp.buttons[4].pressed) 
-			{
-				//l1 *verified*
-			}
-
-			if (gp.buttons[5] != undefined && gp.buttons[5].pressed) 
-			{
-				if (timestamp() - Players[i].lastCall.r1 > deltaTick) 
-				{
-					//'r1' *verified*
-					Players[i].actions.push(DIR.HOLD);
-					Players[i].lastCall.r1 = timestamp();
-				}
-			}
-
-			if (gp.buttons[6] != undefined && gp.buttons[6].pressed) 
-			{
-				//l2 *verified*
-			}
-
-			if (gp.buttons[7] != undefined && gp.buttons[7].pressed) 
-			{
-				//r2 *verified*
-			}
-		}
-	}
-}
-
 function update(idt) 
 {
 	handleGamePadAction();
 	if (playing) {
 		for (var i = 0; i < Players.length; i++) 
 		{
-			//if (Players[i].vscore < Players[i].score)
-			//{
-			//	Players[i].setVisualScore(Players[i].vscore + 1);
-			//}
-			Players[i].setVisualScore(Players[i].score + 1);
 			Players[i].handle(Players[i].actions.shift());
 			Players[i].dt = Players[i].dt + idt;
 			if (Players[i].dt > Players[i].step) 
