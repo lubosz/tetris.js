@@ -130,7 +130,7 @@ function handleGamePadAction()
 
         if (gp != undefined) {
 
-            if (!playing && gp.buttons[0].pressed) 
+            if (gp.buttons[0].pressed) 
             {
                 //x pressed
                 play();
@@ -388,6 +388,7 @@ function run()
 
 function play() 
 {
+    if (playing) return;
     playing = true;
     hide('start');
     reset();
