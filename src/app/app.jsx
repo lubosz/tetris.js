@@ -834,7 +834,7 @@ Player.prototype.lose = function ()
     for (var i = 0; i < Players.length; i++)
     {
         Players[i].playing = false;
-        Players[i].setVisualScore();
+        Players[i].setScore();
 
         if (Players[i] != this)
         {
@@ -849,7 +849,7 @@ Player.prototype.lose = function ()
 Player.prototype.setEnd = function(win)
 {
     this.end = win;
-    this.invalidateEnd();
+    this.invalid.end = true;
 }
 
 Player.prototype.setScore = function (n)
