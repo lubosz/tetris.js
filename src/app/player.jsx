@@ -28,6 +28,35 @@ function setBlock(x, y, blocks, type)
     return blocks;
 }
 
+export class UserInterface {
+    constructor(scoreView, rowsView, winsView, endView) {
+        this.scoreView = scoreView;
+        this.rowsView = rowsView;
+        this.winsView = winsView;
+        this.endView = endView;
+    }
+
+    setScore (score) 
+    {
+        html(this.scoreView, ("00000" + Math.floor(score)).slice(-5));
+    }
+
+    setRows (rows) 
+    {
+        html(this.rowsView, rows);
+    }
+
+    setWins (wins) 
+    {
+        html(this.winsView, wins);
+    }
+
+    setEnd (end) 
+    {
+        html(this.endView, end);
+    }
+}
+
 //-------------------------------------------------
 // This is the Player class containing all Player's
 // Informations
@@ -37,13 +66,14 @@ export class Player {
 
 constructor(playerNum) 
 {
-    this.score = 0;
+    
     this.dx = 0;
     this.dy = 0;
     this.actions = [];
     this.KEYs = {};
     this.invalid = {};
     this.wins = 0;
+    this.score = 0;
     this.hold = undefined,
     this.playerNum = playerNum;
     this.invalid.court = false;
@@ -426,10 +456,6 @@ draw ()
     this.drawCourt();
     this.drawNext();
     this.drawHold();
-    this.drawScore();
-    this.drawRows();
-    this.drawWins();
-    this.drawEnd();
     this.ctx.restore();
 }
 
@@ -488,42 +514,6 @@ drawHold ()
     }
 }
 
-drawScore () 
-{
-    if (this.invalid.score) 
-    {
-        html(this.scoreView, ("00000" + Math.floor(this.score)).slice(-5));
-        this.invalid.score = false;
-    }
-}
-
-drawRows () 
-{
-    if (this.invalid.rows) 
-    {
-        html(this.rowsView, this.rows);
-        this.invalid.rows = false;
-    }
-}
-
-drawWins () 
-{
-    if (this.invalid.wins) 
-    {
-        html(this.winsView, this.wins);
-        this.invalid.wins = false;
-    }
-}
-
-drawEnd () 
-{
-    if (this.invalid.end) 
-    {
-        html(this.endView, this.end);
-        this.invalid.end = false;
-    }
-}
-
 drawPiece (ctx, type, x, y, dir)
 {
     var dx = this.dx;
@@ -532,11 +522,6 @@ drawPiece (ctx, type, x, y, dir)
     {
         drawBlock(ctx, x, y, dx, dy, type.color);
     });
-}
-
-play () 
-{
-    this.playing = true;
 }
 
 setLoseCallback(loseCb)
@@ -551,22 +536,18 @@ lose ()
 
 setEnd (win)
 {
-    this.end = win;
-    this.setScore();
-    this.invalid.end = true;
-    this.playing = false;
+    this.ui.setEnd(win);
 }
 
 setScore (n)
 {
     this.score = n;
-    this.score = n || this.score;
-    this.invalid.score = true;
+    this.ui.setScore(this.score);
 }
 
 addScore (n)
 {
-    this.score = this.score + n;
+    this.setScore(this.score + n);
 }
 
 clearScore ()
@@ -583,14 +564,14 @@ setRows (n)
 {
     this.rows = n;
     this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.rows));
-    this.invalid.rows = true;
+    this.ui.setRows(this.rows);
 }
 
 incrWins () 
 {
     this.wins++;
     this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.wins));
-    this.invalid.wins = true;
+    this.ui.setWins(this.wins);
 }
 
 addRows (n) 

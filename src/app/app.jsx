@@ -1,4 +1,4 @@
-import {Player} from './player.jsx';
+import {Player, UserInterface} from './player.jsx';
 import {DIR, nx, ny} from './game.jsx';
 
 var GeneralKEYs = 
@@ -279,10 +279,8 @@ function initPlayers () {
     Player1.ctx = Player1.canvas.getContext('2d');
     Player1.uctx = Player1.ucanvas.getContext('2d');
     Player1.hctx = Player1.hcanvas.getContext('2d');
-    Player1.scoreView = 'scoreP1';
-    Player1.rowsView = 'rowsP1';
-    Player1.endView = 'endP1';
-    Player1.winsView = 'winsP1';
+
+    Player1.ui = new UserInterface('scoreP1','rowsP1','winsP1','endP1');
     //player 1 KEYs: left_arrow, up_arrow, right_arrow, down_arrow, o, p, i
     Player1.KEYs = 
     {
@@ -302,10 +300,7 @@ function initPlayers () {
     Player2.ctx = Player2.canvas.getContext('2d');
     Player2.uctx = Player2.ucanvas.getContext('2d');
     Player2.hctx = Player2.hcanvas.getContext('2d');
-    Player2.scoreView = 'scoreP2';
-    Player2.rowsView = 'rowsP2';
-    Player2.endView = 'endP2';
-    Player2.winsView = 'winsP2';
+    Player2.ui = new UserInterface('scoreP2','rowsP2','winsP2','endP2');
     //player 2 KEYs: w, a, s, d, q, e, r
     Player2.KEYs = 
     {
@@ -372,11 +367,6 @@ function play()
     playing = true;
     hide('start');
     reset();
-    //start the game for each player
-    for (var i = 0; i < Players.length; i++) 
-    {
-        Players[i].play();
-    }
 }
 
 function addEvents() 
