@@ -1,3 +1,5 @@
+import {keydown} from './inputhandle.js'
+
 //-------------------------------------------------------------------------
 // public game vars
 //-------------------------------------------------------------------------
@@ -393,7 +395,8 @@ Player.prototype.puyuGravityDrop = function ()
 {
     var flying = this.move(DIR.DOWN)
 
-    var last = now = timestamp();
+    var last = timestamp();
+    var now = last;
 
     while (flying) 
     {
@@ -862,8 +865,8 @@ function run()
 
     addEvents(); // attach keydown and resize events
 
-    var last = now = timestamp();
-
+    var last = timestamp();
+    var now = timestamp();
     function frame() 
     {
         now = timestamp();
