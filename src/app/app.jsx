@@ -1,24 +1,12 @@
 //import {keydown, handleGamePadAction} from './inputhandle.jsx'
 
 import {Player} from './player.jsx';
+import {DIR, nx, ny} from './game.jsx';
 
 var GeneralKEYs = 
 {
     ESC: 27,
     SPACE: 32
-};
-
-var DIR = 
-{
-    UP: 0,
-    RIGHT: 1,
-    DOWN: 2,
-    LEFT: 3,
-    MIN: 0,
-    MAX: 3,
-    TURNLEFT: 4,
-    TURNRIGHT: 5,
-    HOLD: 6
 };
 
 var gamepads = {};
@@ -228,9 +216,6 @@ function keydown(ev)
 // public game vars
 //-------------------------------------------------------------------------
 var playing = false;
-var nx = 10;    // width of tetris court (in blocks)
-var ny = 20;    // height of tetris court (in blocks)
-var nu = 5;     // width/height of upcoming preview (in blocks)
 
 var dx;
 var dy;
@@ -292,7 +277,7 @@ function run()
         show('start');
     }
 
-    var Player1 = new Player(0, dx, dy);
+    var Player1 = new Player(0);
 
     Player1.canvas = get('canvasP1');
     Player1.ucanvas = get('upcomingP1');
@@ -316,7 +301,7 @@ function run()
         HOLD: 73
     };
 
-    var Player2 = new Player(1, dx, dy);
+    var Player2 = new Player(1);
     Player2.canvas = get('canvasP2');
     Player2.ucanvas = get('upcomingP2');
     Player2.hcanvas = get('holdP2');

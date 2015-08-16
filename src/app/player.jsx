@@ -1,23 +1,4 @@
-import {randomPiece} from './game.jsx'
-
-var nx = 10;    // width of tetris court (in blocks)
-var ny = 20;    // height of tetris court (in blocks)
-var nu = 5;     // width/height of upcoming preview (in blocks)
-
-var mode = "tetris";
-
-var DIR = 
-{
-    UP: 0,
-    RIGHT: 1,
-    DOWN: 2,
-    LEFT: 3,
-    MIN: 0,
-    MAX: 3,
-    TURNLEFT: 4,
-    TURNRIGHT: 5,
-    HOLD: 6
-};
+import {randomPiece, DIR, nx, ny, nu, mode} from './game.jsx'
 
 //-------------------------------------------------------------------------
 // base helper methods
@@ -54,11 +35,11 @@ function setBlock(x, y, blocks, type)
 // This is the Player class containing all Player's
 // Informations
 //-------------------------------------------------
-export function Player(playerNum, dx, dy) 
+export function Player(playerNum) 
 {
     this.score = 0;
-    this.dx = dx;
-    this.dy = dy;
+    this.dx = 0;
+    this.dy = 0;
     this.actions = [];
     this.KEYs = 
     {
@@ -508,7 +489,7 @@ Player.prototype.drawHold = function ()
         var padding = (nu - this.next.type.size) / 2; // half-arsed attempt at centering next piece display
         this.hctx.save();
         this.hctx.translate(0.5, 0.5);
-        this.hctx.clearRect(0, 0, nu * dx, nu * dy);
+        this.hctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
         this.hctx.strokeStyle = 'white';
         this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
         this.hctx.restore();

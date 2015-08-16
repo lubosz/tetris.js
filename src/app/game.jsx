@@ -2,9 +2,9 @@ import {randomTetrisPiece} from './tetris.jsx'
 import {randomPuyoPiece} from './puyo.jsx'
 
 //set to "puyp" or "tetris"
-var mode = "tetris";
+export const mode = "tetris";
 
-var DIR = 
+export const DIR = 
 {
     UP: 0,
     RIGHT: 1,
@@ -17,7 +17,9 @@ var DIR =
     HOLD: 6
 };
 
-const nx = 10;
+export const nx = 10;    // width of tetris court (in blocks)
+export const ny = 20;    // height of tetris court (in blocks)
+export const nu = 5;     // width/height of upcoming preview (in blocks)
 
 export function randomPiece() 
 {
