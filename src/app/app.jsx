@@ -221,6 +221,8 @@ var nx = 10;    // width of tetris court (in blocks)
 var ny = 20;    // height of tetris court (in blocks)
 var nu = 5;     // width/height of upcoming preview (in blocks)
 var puyucolors = ['cyan','yellow','green','red','purple'];
+var dx;
+var dy;
 
 var DIR = 
 {
