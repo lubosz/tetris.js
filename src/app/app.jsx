@@ -7,8 +7,6 @@ var GeneralKEYs =
     SPACE: 32
 };
 
-var gamepads = {};
-
 //-------------------------------------------------------------------------
 // public game vars
 //-------------------------------------------------------------------------
@@ -22,24 +20,18 @@ var deltaTick = 200;
 function gamepadHandler(event, connecting) 
 {
     var gamepad = event.gamepad;
-    // Note:
-    // gamepad === navigator.getGamepads()[gamepad.index]
 
     if (connecting) 
     {
         if (gamepad.index == 0) 
         {
-            show('connGP_P1');
-        }
-        if (gamepad.index == 1) 
-        {
-            show('connGP_P2');
+            console.log("Gamepad", gamepad.index, "connected:", gamepad);
         }
         gamepads[gamepad.index] = gamepad;
     } 
     else 
     {
-        delete gamepads[gamepad.index];
+        console.log("Gamepad", gamepad.index, "disconnected:");
     }
 }
 
@@ -216,11 +208,6 @@ function keydown(ev)
     }
 }
 
-function canGame() 
-{
-    return "getGamepads" in navigator;
-}
-
 function show(id) 
 {
     get(id).style.visibility = null;
@@ -324,7 +311,7 @@ function initPlayers () {
 
 function haveGamePads() 
 {
-        return "getGamepads" in navigator;
+    return "getGamepads" in navigator;
 }
 
 //-------------------------------------------------------------------------
