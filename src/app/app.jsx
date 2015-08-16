@@ -278,6 +278,9 @@ function keydown(ev)
                     Players[i].actions.push(DIR.UP);
                     handled = true;
                     break;
+                //case 37:
+                //    Players[i].actions.push(DIR.UP);
+                //    break;
                 case GeneralKEYs.ESC:
                     Players[i].lose();
                     handled = true;
