@@ -1,5 +1,3 @@
-//import {keydown, handleGamePadAction} from './inputhandle.jsx'
-
 import {Player} from './player.jsx';
 import {DIR, nx, ny} from './game.jsx';
 
@@ -10,6 +8,16 @@ var GeneralKEYs =
 };
 
 var gamepads = {};
+
+//-------------------------------------------------------------------------
+// public game vars
+//-------------------------------------------------------------------------
+var playing = false;
+var Players = [];
+var gamepads = [];
+
+// update tick in ms for gamepad button if pressed
+var deltaTick = 200;
 
 function gamepadHandler(event, connecting) 
 {
@@ -34,8 +42,6 @@ function gamepadHandler(event, connecting)
         delete gamepads[gamepad.index];
     }
 }
-
-var deltaTick = 200;    //update tick in ms for gamepad button if pressed
 
 function handleGamePadAction() 
 {
@@ -210,15 +216,6 @@ function keydown(ev)
     }
 }
 
-
-
-//-------------------------------------------------------------------------
-// public game vars
-//-------------------------------------------------------------------------
-var playing = false;
-var Players = [];
-var gamepads = [];
-
 function canGame() 
 {
     return "getGamepads" in navigator;
@@ -342,7 +339,7 @@ function run()
         last = now;
         //actualize gamepads
         gamepads = navigator.getGamepads();
-        requestAnimationFrame(frame, Player1.canvas);
+        requestAnimationFrame(frame, Players[0].canvas);
     }
 
     resize(); // setup all our sizing information
