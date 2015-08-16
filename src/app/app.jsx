@@ -1,6 +1,6 @@
 import {Player, UserInterface} from './player.jsx';
 import {DIR, nx, ny} from './game.jsx';
-
+import {get, timestamp, show} from './utils.jsx';
 var GeneralKEYs = 
 {
     ESC: 27,
@@ -206,27 +206,6 @@ function keydown(ev)
     {
         ev.preventDefault(); // prevent arrow keys from scrolling the page (supported in IE9+ and all other browsers)
     }
-}
-
-function show(id) 
-{
-    get(id).style.visibility = null;
-}
-
-function get(id) 
-{
-    return document.getElementById(id);
-}
-
-function hide(id) 
-{
-    get(id).style.visibility = 'hidden';
-}
-
-
-function timestamp() 
-{
-    return new Date().getTime();
 }
 
 function loseCb (player) {

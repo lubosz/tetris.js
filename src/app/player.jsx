@@ -1,17 +1,6 @@
 import {randomPiece, DIR, nx, ny, nu, mode} from './game.jsx'
+import {get, html} from './utils.jsx';
 
-//-------------------------------------------------------------------------
-// base helper methods
-//-------------------------------------------------------------------------
-function get(id) 
-{
-    return document.getElementById(id);
-}
-
-function html(id, html) 
-{
-    get(id).innerHTML = html;
-}
 
 function drawBlock(ctx, x, y, dx, dy, color) 
 {
