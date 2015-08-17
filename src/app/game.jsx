@@ -67,8 +67,39 @@ function gamepadHandler(event, connecting)
     }
 }
 
+var _ = require('lodash');
+
 function handleGamePadAction() 
 {
+/*
+        _.each(gp.buttons, function(button, idx) {
+            if(button > 0) {
+                console.log("pushed", idx);
+            }
+        });
+
+*/
+    gamepads = navigator.getGamepads();
+
+    var foo = {};
+    var pressed = {};
+    _.each(gamepads, function(pad) {
+      if(pad)
+        _.each(pad.buttons, function(button, idx) {
+            if(button.pressed) {
+                pressed[idx] = true;
+                //console.log(pad, "pushed", idx, button);
+                //foo = button;
+                console.log(pad.id, idx, button.value, button.pressed);
+            }
+        });
+
+    });
+
+    _.each(last_pressed, function(pressed, idx) {
+        console.log(idx)
+    });
+
     for (var i = 0; i < gamepads.length; i++) 
     {
         var gp = gamepads[i];
