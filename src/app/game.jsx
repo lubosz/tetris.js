@@ -351,12 +351,11 @@ export function run()
         now = timestamp();
         // using requestAnimationFrame have to be able to handle large delta's caused
         // when it 'hibernates' in a background or non-visible tab
+        handleGamePadAction();
         update(Math.min(1, (now - last) / 1000.0)); 
         for (var i = 0; i < Players.length; i++) 
             Players[i].draw();
         last = now;
-        //actualize gamepads
-        gamepads = navigator.getGamepads();
         requestAnimationFrame(frame, Players[0].canvas);
     }
 
@@ -379,16 +378,8 @@ function addEvents()
     window.addEventListener('resize', resize);
     //window.addEventListener("MozGamepadButtonUp", function(e) { console.log(e); }, false);
     //window.addEventListener("MozGamepadButtonDown", buttonHandler);
-    //initialize gamepad listener (functions implemented in inputhandle.js)
-    window.addEventListener("gamepadconnected", function (e) 
-    {
-        gamepadHandler(e, true);
-    }, false);
-
-    window.addEventListener("gamepaddisconnected", function (e) 
-    {
-        gamepadHandler(e, false);
-    }, false);
+    window.addEventListener("gamepadconnected", function (e) { gamepadHandler(e, true);});
+    window.addEventListener("gamepaddisconnected", function (e) {gamepadHandler(e, false);});
 }
 
 function resize(event) 
@@ -404,8 +395,7 @@ function reset()
 }
 
 function update(idt) 
-{
-    handleGamePadAction();
+{ 
     if (playing) {
         for (var i = 0; i < Players.length; i++) 
             Players[i].update(idt);
