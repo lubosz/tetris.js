@@ -69,37 +69,36 @@ function gamepadHandler(event, connecting)
 
 var _ = require('lodash');
 
+
+var last_pressed = {};
+
+function gamePadCallback(pad, idx, type) {
+    console.log(pad, idx, type);
+
+}
+
 function handleGamePadAction() 
 {
-/*
-        _.each(gp.buttons, function(button, idx) {
-            if(button > 0) {
-                console.log("pushed", idx);
-            }
-        });
-
-*/
     gamepads = navigator.getGamepads();
-/*
-    var foo = {};
-    var pressed = {};
+
     _.each(gamepads, function(pad) {
-      if(pad)
-        _.each(pad.buttons, function(button, idx) {
-            if(button.pressed) {
-                pressed[idx] = true;
-                //console.log(pad, "pushed", idx, button);
-                //foo = button;
-                console.log(pad.id, idx, button.value, button.pressed);
-            }
-        });
-
+        if(pad) {
+            var pressed = {};
+            _.each(pad.buttons, function(button, idx) {
+                if(button.pressed) {
+                    pressed[idx] = true;
+                    if (Object.keys(last_pressed[pad.index]).indexOf(idx.toString()) < 0)
+                        gamePadCallback(pad, idx, "pressed");
+                }
+            });
+            _.each(last_pressed[pad.index], function(isPressed, idx) {
+                if (Object.keys(pressed).indexOf(idx) < 0)
+                    gamePadCallback(pad, idx, "released");
+            });
+            last_pressed[pad.index] = Object.assign({}, pressed);
+        }
     });
 
-    _.each(last_pressed, function(pressed, idx) {
-        console.log(idx)
-    });
-*/
     for (var i = 0; i < gamepads.length; i++) 
     {
         var gp = gamepads[i];
