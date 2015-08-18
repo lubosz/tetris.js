@@ -1,5 +1,5 @@
 import {randomPiece, DIR, nx, ny, nu, mode} from './game.jsx'
-import {get, html} from './utils.jsx';
+import {get, html, sound} from './utils.jsx';
 
 
 function drawBlock(ctx, x, y, dx, dy, color) {
@@ -338,6 +338,7 @@ export class Player {
                 this.addOpponentLines(n - 1);
             }
         }
+        //sound("line");
     }
 
     removeLine(n) {

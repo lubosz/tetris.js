@@ -1,7 +1,7 @@
 import {randomTetrisPiece} from './tetris.jsx'
 import {randomPuyoPiece} from './puyo.jsx'
 import {Player, UserInterface} from './player.jsx';
-import {get, timestamp, show, hide} from './utils.jsx';
+import {get, timestamp, show, hide, sound} from './utils.jsx';
 import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from './gamepad.js';
 import _ from 'lodash';
 
@@ -50,13 +50,6 @@ function randomPiece() {
     else if (mode == "tetris")
         type = randomTetrisPiece();
     return {type: type, dir: DIR.UP, x: Math.round(nx / 2 - 2), y: -2};
-}
-
-
-
-function sound(name) {
-    const sound = new Audio('sound/' + name + '.ogg');
-    sound.play();
 }
 
 function gamePadCallback(pad, idx, type) {
