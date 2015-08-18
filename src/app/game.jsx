@@ -316,9 +316,13 @@ function run()
         requestAnimationFrame(frame, Players[0].canvas);
     }
 
-    resize(); // setup all our sizing information
-    reset(); // reset the per-game variables
-    frame(); // start the first frame
+    Players.forEach(p => {
+        p.resize();
+        p.reset();
+    });
+
+    // start the first frame
+    frame();
 }
 
 function play() 
@@ -337,6 +341,14 @@ function togglePause() {
         hide('paused');
 }
 
+function resize() {
+    Players.forEach(p => {p.resize()});
+}
+
+function reset() {
+    Players.forEach(p => {p.reset()});
+}
+
 function addEvents() 
 {
     window.addEventListener('keydown', keydown);
@@ -347,24 +359,10 @@ function addEvents()
     window.addEventListener("gamepaddisconnected", function (e) {gamepadHandler(e, false);});
 }
 
-function resize(event) 
-{
-    for (var i = 0; i < Players.length; i++)
-        Players[i].resize();
-}
-
-function reset() 
-{
-    for (var i = 0; i < Players.length; i++) 
-        Players[i].reset();
-}
-
 function update(idt) 
 { 
-    if (playing) {
-        for (var i = 0; i < Players.length; i++) 
-            Players[i].update(idt);
-    }
+    if (playing)
+        Players.forEach(p => {p.update(idt)});
 }
 
 export { run, randomPiece };
