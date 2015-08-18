@@ -2,6 +2,7 @@ import {randomTetrisPiece} from './tetris.jsx'
 import {randomPuyoPiece} from './puyo.jsx'
 import {Player, UserInterface} from './player.jsx';
 import {get, timestamp, show, hide} from './utils.jsx';
+import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from './gamepad.js';
 import _ from 'lodash';
 
 //set to "puyp" or "tetris"
@@ -35,7 +36,7 @@ export const nu = 5;     // width/height of upcoming preview (in blocks)
 //-------------------------------------------------------------------------
 var playing = false;
 var Players = [];
-var gamepads = [];
+
 
 // update tick in ms for gamepad button if pressed
 var deltaTick = 200;
@@ -52,43 +53,9 @@ function randomPiece()
     return {type: type, dir: DIR.UP, x: Math.round(nx / 2 - 2), y: -2};
 }
 
-function gamepadHandler(event, connecting) 
-{
-    var gamepad = event.gamepad;
-
-    if (connecting) 
-    {
-        if (gamepad.index == 0) 
-        {
-            console.log("Gamepad", gamepad.index, "connected:", gamepad);
-        }
-        gamepads[gamepad.index] = gamepad;
-    } 
-    else 
-    {
-        console.log("Gamepad", gamepad.index, "disconnected:");
-    }
-}
-
-var last_pressed = {};
-var interval_ids = {};
-var timeout_ids = {};
-const repeat_interval = 80; //ms
-const repeat_timeout = 300; //ms
-
-
-function delayedPressed(idx, callback) {
-    callback();
-    timeout_ids[idx] = setTimeout(function(){
-        callback();
-        interval_ids[idx] = setInterval(function(){
-            callback();
-        }, repeat_interval);
-    }, repeat_timeout);
-}
 
 function gamePadCallback(pad, idx, type) {
-    //console.log(pad, idx, type);
+    console.log(pad, idx, type);
     var i = pad.index;
     if (type == "pressed") {
         switch(idx) {
@@ -138,33 +105,11 @@ function gamePadCallback(pad, idx, type) {
                 break;
         }
     } else if (type == "released") {
-        clearInterval(interval_ids[idx]);
-        clearInterval(timeout_ids[idx]);
+        clearDelayed(idx);
     }
 }
 
-function handleGamePadAction() 
-{
-    gamepads = navigator.getGamepads();
 
-    _.each(gamepads, function(pad) {
-        if(pad) {
-            var pressed = {};
-            _.each(pad.buttons, function(button, idx) {
-                if(button.pressed) {
-                    pressed[idx] = true;
-                    if (Object.keys(last_pressed[pad.index]).indexOf(idx.toString()) < 0)
-                        gamePadCallback(pad, idx, "pressed");
-                }
-            });
-            _.each(last_pressed[pad.index], function(isPressed, idx) {
-                if (Object.keys(pressed).indexOf(idx) < 0)
-                    gamePadCallback(pad, idx, "released");
-            });
-            last_pressed[pad.index] = Object.assign({}, pressed);
-        }
-    });
-}
 
 function keydown(ev) 
 {
@@ -303,8 +248,7 @@ function run()
 
     function frame() 
     {
-        handleGamePadAction();
-
+        queryGamePads(gamePadCallback);
         // using requestAnimationFrame have to be able to handle large delta's caused
         // when it 'hibernates' in a background or non-visible tab
         if (!paused) {
