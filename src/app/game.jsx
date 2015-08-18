@@ -2,6 +2,7 @@ import {randomTetrisPiece} from './tetris.jsx'
 import {randomPuyoPiece} from './puyo.jsx'
 import {Player, UserInterface} from './player.jsx';
 import {get, timestamp, show, hide} from './utils.jsx';
+import _ from 'lodash';
 
 //set to "puyp" or "tetris"
 export const mode = "tetris";
@@ -39,7 +40,7 @@ var gamepads = [];
 // update tick in ms for gamepad button if pressed
 var deltaTick = 200;
 
-export function randomPiece() 
+function randomPiece()
 {
     var type;
     if(mode == "puyu")
@@ -66,8 +67,6 @@ function gamepadHandler(event, connecting)
         console.log("Gamepad", gamepad.index, "disconnected:");
     }
 }
-
-var _ = require('lodash');
 
 var last_pressed = {};
 var interval_ids = {};
@@ -282,7 +281,7 @@ function haveGamePads()
 //-------------------------------------------------------------------------
 // GAME LOOP
 //-------------------------------------------------------------------------
-export function run() 
+function run()
 {
     var last = timestamp();
     var now = timestamp();
@@ -350,3 +349,5 @@ function update(idt)
             Players[i].update(idt);
     }
 }
+
+export { run, randomPiece };
