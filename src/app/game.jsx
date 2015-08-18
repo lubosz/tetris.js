@@ -70,6 +70,20 @@ function gamepadHandler(event, connecting)
 var _ = require('lodash');
 
 var last_pressed = {};
+var interval_ids = {};
+var timeout_ids = {};
+const repeat_interval = 90; //ms
+const repeat_timeout = 350; //ms
+
+
+function delayedPressed(idx, callback) {
+    callback();
+    timeout_ids[idx] = setTimeout(function(){
+        interval_ids[idx] = setInterval(function(){
+            callback();
+        }, repeat_interval);
+    }, repeat_timeout);
+}
 
 function gamePadCallback(pad, idx, type) {
     //console.log(pad, idx, type);
@@ -78,15 +92,15 @@ function gamePadCallback(pad, idx, type) {
         switch(idx) {
             case 13:
                 //arrow down
-                Players[i].actions.push(DIR.DOWN);
+                delayedPressed(idx, function() {Players[i].actions.push(DIR.DOWN);} );
                 break;
             case 14:
                 //arrow left
-                Players[i].actions.push(DIR.LEFT);
+                delayedPressed(idx, function() {Players[i].actions.push(DIR.LEFT);} );
                 break;
             case 15:
                 //arrow right
-                Players[i].actions.push(DIR.RIGHT);
+                delayedPressed(idx, function() {Players[i].actions.push(DIR.RIGHT);} );
                 break;
             case 12:
                 //arrow up
@@ -117,6 +131,9 @@ function gamePadCallback(pad, idx, type) {
                 //l1
                 break;
         }
+    } else if (type == "released") {
+        clearInterval(interval_ids[idx]);
+        clearInterval(timeout_ids[idx]);
     }
 }
 
