@@ -69,12 +69,55 @@ function gamepadHandler(event, connecting)
 
 var _ = require('lodash');
 
-
 var last_pressed = {};
 
 function gamePadCallback(pad, idx, type) {
-    console.log(pad, idx, type);
-
+    //console.log(pad, idx, type);
+    var i = pad.index;
+    if (type == "pressed") {
+        switch(idx) {
+            case 13:
+                //arrow down
+                Players[i].actions.push(DIR.DOWN);
+                break;
+            case 14:
+                //arrow left
+                Players[i].actions.push(DIR.LEFT);
+                break;
+            case 15:
+                //arrow right
+                Players[i].actions.push(DIR.RIGHT);
+                break;
+            case 12:
+                //arrow up
+                Players[i].actions.push(DIR.UP);
+                break;
+            case 0:
+                //x
+                play();
+                Players[i].actions.push(DIR.TURNLEFT);
+                break;
+            case 1:
+                //'o'
+                Players[i].actions.push(DIR.TURNRIGHT);
+                break;
+            case 5:
+                //'r1'
+                Players[i].actions.push(DIR.HOLD);
+                break;
+            case 6:
+                //l2
+            case 7:
+                //r2
+            case 2:
+                //square
+            case 3:
+                //'triangle'
+            case 4:
+                //l1
+                break;
+        }
+    }
 }
 
 function handleGamePadAction() 
@@ -98,116 +141,6 @@ function handleGamePadAction()
             last_pressed[pad.index] = Object.assign({}, pressed);
         }
     });
-
-    for (var i = 0; i < gamepads.length; i++) 
-    {
-        var gp = gamepads[i];
-
-        if (gp != undefined) {
-
-            if (gp.buttons[0].pressed) 
-            {
-                //x pressed
-                play();
-            }
-
-            //two gamepads fix
-            if (gp.buttons[13] != undefined && gp.buttons[13].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.arrow_down > deltaTick) 
-                {
-                    //arrow down *verified*
-                    Players[i].actions.push(DIR.DOWN);
-                    Players[i].lastCall.arrow_down = timestamp();
-                }
-            }
-
-            if (gp.buttons[14] != undefined && gp.buttons[14].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.arrow_left > deltaTick) 
-                {
-                    //arrow left *verified*
-                    Players[i].actions.push(DIR.LEFT);
-                    Players[i].lastCall.arrow_left = timestamp();
-                }
-            }
-
-            if (gp.buttons[15] != undefined && gp.buttons[15].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.arrow_right > deltaTick) 
-                {
-                    //arrow right *verified*
-                    Players[i].actions.push(DIR.RIGHT);
-                    Players[i].lastCall.arrow_right = timestamp();
-                }
-            }
-
-            if (gp.buttons[12] != undefined && gp.buttons[12].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.arrow_up > deltaTick) 
-                {
-                    //arrow up *verified*
-                    Players[i].actions.push(DIR.UP);
-                    Players[i].lastCall.arrow_up = timestamp();
-                }
-            }
-
-            if (gp.buttons[0] != undefined && gp.buttons[0].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.x > deltaTick) 
-                {
-                    //x *verified*
-                    Players[i].actions.push(DIR.TURNLEFT);
-                    Players[i].lastCall.x = timestamp();
-                }
-            }
-
-            if (gp.buttons[1] != undefined && gp.buttons[1].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.o > deltaTick) 
-                {
-                    //'o' *verified*
-                    Players[i].actions.push(DIR.TURNRIGHT);
-                    Players[i].lastCall.o = timestamp();
-                }
-            }
-
-            if (gp.buttons[2] != undefined && gp.buttons[2].pressed) 
-            {
-                //square *verified*
-            }
-
-            if (gp.buttons[3] != undefined && gp.buttons[3].pressed) 
-            {
-                //'triangle' *verified*
-            }
-
-            if (gp.buttons[4] != undefined && gp.buttons[4].pressed) 
-            {
-                //l1 *verified*
-            }
-
-            if (gp.buttons[5] != undefined && gp.buttons[5].pressed) 
-            {
-                if (timestamp() - Players[i].lastCall.r1 > deltaTick) 
-                {
-                    //'r1' *verified*
-                    Players[i].actions.push(DIR.HOLD);
-                    Players[i].lastCall.r1 = timestamp();
-                }
-            }
-
-            if (gp.buttons[6] != undefined && gp.buttons[6].pressed) 
-            {
-                //l2 *verified*
-            }
-
-            if (gp.buttons[7] != undefined && gp.buttons[7].pressed) 
-            {
-                //r2 *verified*
-            }
-        }
-    }
 }
 
 function keydown(ev) 
