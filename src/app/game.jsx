@@ -53,6 +53,12 @@ function randomPiece() {
 }
 
 
+
+function sound(name) {
+    const sound = new Audio('sound/' + name + '.ogg');
+    sound.play();
+}
+
 function gamePadCallback(pad, idx, type) {
     console.log(pad, idx, type);
     var i = pad.index;
@@ -62,32 +68,38 @@ function gamePadCallback(pad, idx, type) {
                 //arrow down
                 delayedPressed(idx, function () {
                     Players[i].actions.push(DIR.DOWN);
+                    sound("move");
                 });
                 break;
             case 14:
                 //arrow left
                 delayedPressed(idx, function () {
                     Players[i].actions.push(DIR.LEFT);
+                    sound("move");
                 });
                 break;
             case 15:
                 //arrow right
                 delayedPressed(idx, function () {
                     Players[i].actions.push(DIR.RIGHT);
+                    sound("move");
                 });
                 break;
             case 12:
                 //arrow up
                 Players[i].actions.push(DIR.UP);
+                sound("drop");
                 break;
             case 0:
                 //x
                 play();
                 Players[i].actions.push(DIR.TURNLEFT);
+                sound("rotate");
                 break;
             case 1:
                 //'o'
                 Players[i].actions.push(DIR.TURNRIGHT);
+                sound("rotate");
                 break;
             case 5:
                 //'r1'
