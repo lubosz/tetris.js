@@ -13,7 +13,7 @@ export function html(id, html)
 
 export function show(id) 
 {
-    get(id).style.visibility = null;
+    get(id).style.visibility = 'visible';
 }
 
 export function hide(id) 

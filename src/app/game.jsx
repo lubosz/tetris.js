@@ -123,7 +123,8 @@ function gamePadCallback(pad, idx, type) {
                 break;
             case 9:
                 //'options
-                paused = !paused;
+                togglePause();
+                break;
             case 6:
                 //l2
             case 7:
@@ -302,14 +303,16 @@ function run()
 
     function frame() 
     {
-        now = timestamp();
+        handleGamePadAction();
+
         // using requestAnimationFrame have to be able to handle large delta's caused
         // when it 'hibernates' in a background or non-visible tab
-        handleGamePadAction();
-        update(Math.min(1, (now - last) / 1000.0)); 
-        for (var i = 0; i < Players.length; i++) 
-            Players[i].draw();
-        last = now;
+        if (!paused) {
+            now = timestamp();
+            update(Math.min(1, (now - last) / 1000.0));
+            Players.forEach(p => {p.draw()});
+            last = now;
+        }
         requestAnimationFrame(frame, Players[0].canvas);
     }
 
@@ -324,6 +327,14 @@ function play()
     playing = true;
     hide('start');
     reset();
+}
+
+function togglePause() {
+    paused = !paused;
+    if (paused)
+        show('paused');
+    else
+        hide('paused');
 }
 
 function addEvents() 

@@ -1,7 +1,6 @@
         body        { font-family: Helvetica, inline-block; sans-serif; background: url(tetris_bg_texture.jpg); color: white; padding: auto;}
         #player1    { display: inline-block; margin: left; padding: 0em; }
         #player2    { display: inline-block; margin: right; padding: 0em; }
-        #start      { position: absolute; top: 82%; left: 44%;}
         #canvasP1   { display: inline-block; background: url(texture.jpg); border: 2px solid #333; opacity: 0.8;}
         #canvasP2   { display: inline-block; background: url(texture.jpg); border: 2px solid #333; opacity: 0.8;}
         #menu       { display: inline-block; vertical-align: }
@@ -35,3 +34,7 @@
         #menu      { width: 200px; }
         #player1,
         #player2    { font-size: 1.0vw; }
+
+.message {
+    font-size: 2em;
+}
