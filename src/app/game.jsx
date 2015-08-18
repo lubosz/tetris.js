@@ -73,13 +73,14 @@ function gamepadHandler(event, connecting)
 var last_pressed = {};
 var interval_ids = {};
 var timeout_ids = {};
-const repeat_interval = 90; //ms
-const repeat_timeout = 350; //ms
+const repeat_interval = 80; //ms
+const repeat_timeout = 300; //ms
 
 
 function delayedPressed(idx, callback) {
     callback();
     timeout_ids[idx] = setTimeout(function(){
+        callback();
         interval_ids[idx] = setInterval(function(){
             callback();
         }, repeat_interval);
