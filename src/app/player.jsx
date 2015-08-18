@@ -20,10 +20,9 @@ function eachblock(type, x, y, dir, fn) {
     // do the bit manipulation and iterate through each
     // occupied block (x,y) for a given piece applying fn
     //---------------------------------------------------
-    var bit, result, row = 0,
+    var bit, row = 0,
         col = 0,
         blocks = type.blocks[dir];
-
 
     for (bit = 0x8000; bit > 0; bit = bit >> 1) {
         if (blocks & bit) {
@@ -63,13 +62,10 @@ export class UserInterface {
 
 //-------------------------------------------------
 // This is the Player class containing all Player's
-// Informations
+// Information
 //-------------------------------------------------
 export class Player {
-
-
     constructor(playerNum) {
-
         this.dx = 0;
         this.dy = 0;
         this.actions = [];
@@ -77,8 +73,8 @@ export class Player {
         this.invalid = {};
         this.wins = 0;
         this.score = 0;
-        this.hold = undefined,
-            this.playerNum = playerNum;
+        this.hold = null;
+        this.playerNum = playerNum;
         this.invalid.court = false;
         this.holdUsed = false;
         this.speed =
@@ -88,7 +84,7 @@ export class Player {
             min: 0.1
         }; // how long before piece drops by 1 row (seconds)
 
-        let playerStr = "P" + String(playerNum + 1);
+        let playerStr = "P" + (playerNum + 1).toString();
         this.canvas = get('canvas' + playerStr);
         this.ucanvas = get('upcoming' + playerStr);
         this.hcanvas = get('hold' + playerStr);
@@ -117,7 +113,7 @@ export class Player {
 // check if a piece can fit into a position in the grid
 //-----------------------------------------------------
     occupied(type, x, y, dir) {
-        var result = false
+        var result = false;
         var actualBlocks = this.blocks;
 
         eachblock(type, x, y, dir, function (x, y) {
@@ -129,7 +125,7 @@ export class Player {
     }
 
     puyuoccupied(type, x, y, dir) {
-        var result = undefined;
+        var result = null;
         var actualBlocks = this.blocks;
 
         eachblock(type, x, y + 1, dir, function (x, y) {
@@ -207,10 +203,9 @@ export class Player {
     }
 
     rotate(dir) {
+        let newdir;
         if (DIR.TURNRIGHT == dir) {
-            var newdir = (this.current.dir == DIR.MAX ? DIR.MIN : this.current.dir + 1);
-            var dir;
-            var inval = false;
+            newdir = (this.current.dir == DIR.MAX ? DIR.MIN : this.current.dir + 1);
             var turned = false;
 
             if (this.unoccupied(this.current.type, this.current.x, this.current.y, newdir)) {
@@ -219,7 +214,7 @@ export class Player {
             }
         }
         else if (DIR.TURNLEFT == dir) {
-            var newdir = (this.current.dir == DIR.MIN ? DIR.MAX : this.current.dir - 1);
+            newdir = (this.current.dir == DIR.MIN ? DIR.MAX : this.current.dir - 1);
             if (this.unoccupied(this.current.type, this.current.x, this.current.y, newdir)) {
                 dir = newdir;
                 turned = true;
@@ -233,9 +228,9 @@ export class Player {
     }
 
     instantDrop() {
-        var flying = this.move(DIR.DOWN)
+        var flying = this.move(DIR.DOWN);
         while (flying) {
-            flying = this.move(DIR.DOWN)
+            flying = this.move(DIR.DOWN);
         }
 
         this.addScore(10);
@@ -250,7 +245,7 @@ export class Player {
     }
 
     puyuGravityDrop() {
-        var flying = this.move(DIR.DOWN)
+        var flying = this.move(DIR.DOWN);
 
         var last = timestamp();
         var now = last;
@@ -363,8 +358,7 @@ export class Player {
     }
 
     receiveLines(n) {
-        var gap = 0;
-        gap = Math.floor(Math.random() * nx);
+        var gap = Math.floor(Math.random() * nx);
 
         //do n times:
         for (var i = 0; i < n; i++) {
