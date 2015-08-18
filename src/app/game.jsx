@@ -40,6 +40,8 @@ var gamepads = [];
 // update tick in ms for gamepad button if pressed
 var deltaTick = 200;
 
+var paused = false;
+
 function randomPiece()
 {
     var type;
@@ -118,6 +120,9 @@ function gamePadCallback(pad, idx, type) {
                 //'r1'
                 Players[i].actions.push(DIR.HOLD);
                 break;
+            case 9:
+                //'options
+                paused = !paused;
             case 6:
                 //l2
             case 7:
