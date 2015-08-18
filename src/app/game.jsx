@@ -80,7 +80,7 @@ function handleGamePadAction()
 
 */
     gamepads = navigator.getGamepads();
-
+/*
     var foo = {};
     var pressed = {};
     _.each(gamepads, function(pad) {
@@ -99,7 +99,7 @@ function handleGamePadAction()
     _.each(last_pressed, function(pressed, idx) {
         console.log(idx)
     });
-
+*/
     for (var i = 0; i < gamepads.length; i++) 
     {
         var gp = gamepads[i];
