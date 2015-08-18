@@ -13,60 +13,58 @@
 //                             0x44C0
 //
 //-------------------------------------------------------------------------
-var i = 
+var i =
 {
     size: 4,
     blocks: [0x0F00, 0x2222, 0x00F0, 0x4444],
     color: 'cyan'
 };
-var j = 
+var j =
 {
     size: 3,
     blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20],
     color: 'blue'
 };
-var l = 
+var l =
 {
     size: 3,
     blocks: [0x4460, 0x0E80, 0xC440, 0x2E00],
     color: 'orange'
 };
-var o = 
+var o =
 {
     size: 2,
     blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00],
     color: 'yellow'
 };
-var s = 
+var s =
 {
     size: 3,
     blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620],
     color: 'green'
-}; 
-var t = 
+};
+var t =
 {
     size: 3,
     blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640],
     color: 'purple'
 };
-var z = 
+var z =
 {
     size: 3,
     blocks: [0x0C60, 0x4C80, 0xC600, 0x2640],
     color: 'red'
 };
 
-function random(min, max) 
-{
+function random(min, max) {
     return (min + (Math.random() * (max - min)));
 }
 
-function randomChoice(choices) 
-{
+function randomChoice(choices) {
     return choices[Math.round(random(0, choices.length - 1))];
 }
 
 export function randomTetrisPiece() {
-    let pieces = [i,i,i,i,j,j,j,j,l,l,l,l,o,o,o,o,s,s,s,s,t,t,t,t,z,z,z,z];
-    return pieces.splice(random(0, pieces.length-1), 1)[0];
+    let pieces = [i, i, i, i, j, j, j, j, l, l, l, l, o, o, o, o, s, s, s, s, t, t, t, t, z, z, z, z];
+    return pieces.splice(random(0, pieces.length - 1), 1)[0];
 }

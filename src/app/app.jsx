@@ -1,8 +1,7 @@
-import injectTapEventPlugin from 'react-tap-event-plugin'
 import {run} from './game.jsx'
+/*
+import injectTapEventPlugin from 'react-tap-event-plugin'
 let React = require('react/addons');
-
-
 let mui = require('material-ui');
 let RaisedButton = mui.RaisedButton;
 let Dialog = mui.Dialog;
@@ -10,7 +9,6 @@ let AppBar = mui.AppBar;
 let Tab = mui.Tab;
 let Tabs = mui.Tabs;
 let IconButton = mui.IconButton;
-//let NavigationClose = mui.NavigationClose;
 let FlatButton = mui.FlatButton;
 let ThemeManager = new mui.Styles.ThemeManager();
 let Colors = mui.Styles.Colors;
@@ -42,7 +40,7 @@ let Main = React.createClass({
         };
 
         let standardActions = [
-            { text: 'OkayLOL' }
+            {text: 'OkayLOL'}
         ];
 
         return (
@@ -56,13 +54,13 @@ let Main = React.createClass({
                             <RaisedButton label="Login" primary={true} onTouchTap={this._showLogin} />
                             <RaisedButton label="Register" primary={true} onTouchTap={this._showRegistration} />
                         </div>
-                    } />
-                    <Dialog
-                        title="Login"
-                        actions={standardActions}
-                        ref="loginDialog">
-                        Oh hai
-                    </Dialog>
+                    }/>
+                <Dialog
+                    title="Login"
+                    actions={standardActions}
+                    ref="loginDialog">
+                    Oh hai
+                </Dialog>
             </div>
         );
     },
@@ -79,20 +77,6 @@ let Main = React.createClass({
 
 });
 
-//React.render(<Main />, react);
-
-/*
-if (!window.requestAnimationFrame) 
-{
-    // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-    window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function (callback, element) 
-    {
-        window.setTimeout(callback, 1000 / 60);
-    }
-}
+React.render(<Main />, react);
 */
 run();

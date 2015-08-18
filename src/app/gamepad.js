@@ -4,7 +4,6 @@
 import _ from 'lodash';
 
 var last_pressed = {};
-
 var interval_ids = {};
 var timeout_ids = {};
 
@@ -23,9 +22,9 @@ function gamepadHandler(event, connecting) {
 
 function delayedPressed(idx, callback) {
     callback();
-    timeout_ids[idx] = setTimeout(function(){
+    timeout_ids[idx] = setTimeout(function () {
         callback();
-        interval_ids[idx] = setInterval(function(){
+        interval_ids[idx] = setInterval(function () {
             callback();
         }, repeat_interval);
     }, repeat_timeout);
@@ -38,17 +37,17 @@ function clearDelayed(idx) {
 
 function queryGamePads(gamePadCallback) {
     let gamepads = navigator.getGamepads();
-    _.each(gamepads, function(pad) {
-        if(pad) {
+    _.each(gamepads, function (pad) {
+        if (pad) {
             let pressed = {};
-            _.each(pad.buttons, function(button, idx) {
-                if(button.pressed) {
+            _.each(pad.buttons, function (button, idx) {
+                if (button.pressed) {
                     pressed[idx] = true;
                     if (Object.keys(last_pressed[pad.index]).indexOf(idx.toString()) < 0)
                         gamePadCallback(pad, idx, "pressed");
                 }
             });
-            _.each(last_pressed[pad.index], function(isPressed, idx) {
+            _.each(last_pressed[pad.index], function (isPressed, idx) {
                 if (Object.keys(pressed).indexOf(idx) < 0)
                     gamePadCallback(pad, idx, "released");
             });

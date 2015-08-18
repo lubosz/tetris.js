@@ -8,7 +8,7 @@ import _ from 'lodash';
 //set to "puyp" or "tetris"
 export const mode = "tetris";
 
-export const DIR = 
+export const DIR =
 {
     UP: 0,
     RIGHT: 1,
@@ -21,7 +21,7 @@ export const DIR =
     HOLD: 6
 };
 
-var GeneralKEYs = 
+var GeneralKEYs =
 {
     ESC: 27,
     SPACE: 32
@@ -43,12 +43,11 @@ var deltaTick = 200;
 
 var paused = false;
 
-function randomPiece()
-{
+function randomPiece() {
     var type;
-    if(mode == "puyu")
+    if (mode == "puyu")
         type = randomPuyoPiece();
-    else if(mode == "tetris")
+    else if (mode == "tetris")
         type = randomTetrisPiece();
     return {type: type, dir: DIR.UP, x: Math.round(nx / 2 - 2), y: -2};
 }
@@ -58,18 +57,24 @@ function gamePadCallback(pad, idx, type) {
     console.log(pad, idx, type);
     var i = pad.index;
     if (type == "pressed") {
-        switch(idx) {
+        switch (idx) {
             case 13:
                 //arrow down
-                delayedPressed(idx, function() {Players[i].actions.push(DIR.DOWN);} );
+                delayedPressed(idx, function () {
+                    Players[i].actions.push(DIR.DOWN);
+                });
                 break;
             case 14:
                 //arrow left
-                delayedPressed(idx, function() {Players[i].actions.push(DIR.LEFT);} );
+                delayedPressed(idx, function () {
+                    Players[i].actions.push(DIR.LEFT);
+                });
                 break;
             case 15:
                 //arrow right
-                delayedPressed(idx, function() {Players[i].actions.push(DIR.RIGHT);} );
+                delayedPressed(idx, function () {
+                    Players[i].actions.push(DIR.RIGHT);
+                });
                 break;
             case 12:
                 //arrow up
@@ -93,13 +98,13 @@ function gamePadCallback(pad, idx, type) {
                 togglePause();
                 break;
             case 6:
-                //l2
+            //l2
             case 7:
-                //r2
+            //r2
             case 2:
-                //square
+            //square
             case 3:
-                //'triangle'
+            //'triangle'
             case 4:
                 //l1
                 break;
@@ -110,18 +115,13 @@ function gamePadCallback(pad, idx, type) {
 }
 
 
-
-function keydown(ev) 
-{
+function keydown(ev) {
 
     console.log("getting key event", ev);
     var handled = false;
-    if (playing) 
-    {
-        for (var i = 0; i < Players.length; i++) 
-        {
-            switch (ev.keyCode) 
-            {
+    if (playing) {
+        for (var i = 0; i < Players.length; i++) {
+            switch (ev.keyCode) {
                 case Players[i].KEYs.LEFT:
                     Players[i].actions.push(DIR.LEFT);
                     handled = true;
@@ -163,25 +163,21 @@ function keydown(ev)
                     break;
             }
         }
-    } else if (ev.keyCode == GeneralKEYs.SPACE) 
-    {
+    } else if (ev.keyCode == GeneralKEYs.SPACE) {
         play();
         handled = true;
     }
-    if (handled) 
-    {
+    if (handled) {
         ev.preventDefault(); // prevent arrow keys from scrolling the page (supported in IE9+ and all other browsers)
     }
 }
 
-function loseCb (player) {
+function loseCb(player) {
 
     player.setEnd('LOSE');
 
-    for (var i = 0; i < Players.length; i++)
-    {
-        if (Players[i] != this)
-        {
+    for (var i = 0; i < Players.length; i++) {
+        if (Players[i] != this) {
             Players[i].setEnd('WIN');
             Players[i].incrWins();
         }
@@ -189,10 +185,10 @@ function loseCb (player) {
     playing = false;
 }
 
-function initPlayers () {
+function initPlayers() {
     var Player1 = new Player(0);
     //player 1 KEYs: left_arrow, up_arrow, right_arrow, down_arrow, o, p, i
-    Player1.KEYs = 
+    Player1.KEYs =
     {
         LEFT: 37,
         UP: 38,
@@ -205,7 +201,7 @@ function initPlayers () {
 
     var Player2 = new Player(1);
     //player 2 KEYs: w, a, s, d, q, e, r
-    Player2.KEYs = 
+    Player2.KEYs =
     {
         LEFT: 65,
         UP: 87,
@@ -225,36 +221,35 @@ function initPlayers () {
     Players.push(Player2);
 }
 
-function haveGamePads() 
-{
+function haveGamePads() {
     return "getGamepads" in navigator;
 }
 
 //-------------------------------------------------------------------------
 // GAME LOOP
 //-------------------------------------------------------------------------
-function run()
-{
+function run() {
     var last = timestamp();
     var now = timestamp();
 
-    if (haveGamePads()) 
+    if (haveGamePads())
         show('start');
 
     initPlayers();
 
     // attach keydown and resize events
-    addEvents(); 
+    addEvents();
 
-    function frame() 
-    {
+    function frame() {
         queryGamePads(gamePadCallback);
         // using requestAnimationFrame have to be able to handle large delta's caused
         // when it 'hibernates' in a background or non-visible tab
         if (!paused) {
             now = timestamp();
             update(Math.min(1, (now - last) / 1000.0));
-            Players.forEach(p => {p.draw()});
+            Players.forEach(p => {
+                p.draw()
+            });
             last = now;
         }
         requestAnimationFrame(frame, Players[0].canvas);
@@ -269,8 +264,7 @@ function run()
     frame();
 }
 
-function play() 
-{
+function play() {
     if (playing) return;
     playing = true;
     hide('start');
@@ -286,27 +280,35 @@ function togglePause() {
 }
 
 function resize() {
-    Players.forEach(p => {p.resize()});
+    Players.forEach(p => {
+        p.resize()
+    });
 }
 
 function reset() {
-    Players.forEach(p => {p.reset()});
+    Players.forEach(p => {
+        p.reset()
+    });
 }
 
-function addEvents() 
-{
+function addEvents() {
     window.addEventListener('keydown', keydown);
     window.addEventListener('resize', resize);
     //window.addEventListener("MozGamepadButtonUp", function(e) { console.log(e); }, false);
     //window.addEventListener("MozGamepadButtonDown", buttonHandler);
-    window.addEventListener("gamepadconnected", function (e) { gamepadHandler(e, true);});
-    window.addEventListener("gamepaddisconnected", function (e) {gamepadHandler(e, false);});
+    window.addEventListener("gamepadconnected", function (e) {
+        gamepadHandler(e, true);
+    });
+    window.addEventListener("gamepaddisconnected", function (e) {
+        gamepadHandler(e, false);
+    });
 }
 
-function update(idt) 
-{ 
+function update(idt) {
     if (playing)
-        Players.forEach(p => {p.update(idt)});
+        Players.forEach(p => {
+            p.update(idt)
+        });
 }
 
 export { run, randomPiece };
