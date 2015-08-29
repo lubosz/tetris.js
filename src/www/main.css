@@ -5,32 +5,24 @@ body {
     padding: auto;
 }
 
-#player1 {
+#player1, #player2 {
     display: inline-block;
     padding: 0;
+    font-size: 1.0vw;
 }
 
-#player2 {
-    display: inline-block;
-    padding: 0;
-}
-
-#canvasP1 {
+#canvasP1, #canvasP2 {
     display: inline-block;
     background: #01093a;
     border: 2px solid #333;
     opacity: 0.8;
-}
-
-#canvasP2 {
-    display: inline-block;
-    background: #01093a;
-    border: 2px solid #333;
-    opacity: 0.8;
+    width: 45vh;
+    height: 90vh;
 }
 
 #menu {
     display: inline-block;
+    width: 200px;
 }
 
 #menu p {
@@ -50,8 +42,7 @@ body {
     background: url(img/porenta.gif);
 }
 
-#avatarP1,
-#avatarP2 {
+#avatarP1, #avatarP2 {
     display: block;
     margin: 0 auto;
     opacity: 0.8;
@@ -60,8 +51,7 @@ body {
     width: 10vw;
 }
 
-#upcomingP1,
-#upcomingP2 {
+#upcomingP1, #upcomingP2 {
     display: block;
     margin: 0 auto;
     opacity: 0.8;
@@ -71,8 +61,7 @@ body {
     width: 12vw;
 }
 
-#holdP1,
-#holdP2 {
+#holdP1, #holdP2 {
     display: block;
     margin: 0 auto;
     opacity: 0.8;
@@ -82,80 +71,47 @@ body {
     width: 12vw;
 }
 
-#nameP1 {
-    color: blue;
+#nameP1, #nameP2 {
     font-weight: bold;
     vertical-align: middle;
 }
 
 #nameP2 {
     color: purple;
-    font-weight: bold;
-    vertical-align: middle;
 }
 
-#scoreP1 {
+#nameP1 {
+    color: blue;
+}
+
+#scoreP1, #scoreP2 {
     color: white;
     font-weight: bold;
     vertical-align: middle;
 }
 
-#scoreP2 {
-    color: white;
-    font-weight: bold;
-    vertical-align: middle;
-}
-
-#connGP_P1 {
+#connGP_P1, #connGP_P2 {
     color: white;
     font-weight: bold;
     vertical-align: middle;
     visibility: hidden;
 }
 
-#connGP_P2 {
-    color: white;
-    font-weight: bold;
-    vertical-align: middle;
-    visibility: hidden;
-}
-
-#winsP1 {
+#winsP1, #winsP2 {
     display: block;
     color: white;
     font-weight: bold;
     vertical-align: middle;
 }
 
-#winsP2 {
+#rowsP1, #rowsP2 {
     display: block;
     color: white;
     font-weight: bold;
     vertical-align: middle;
 }
 
-#rowsP1 {
-    display: block;
-    color: white;
-    font-weight: bold;
-    vertical-align: middle;
-}
-
-#rowsP2 {
-    display: block;
-    color: white;
-    font-weight: bold;
-    vertical-align: middle;
-}
-
-#endP1 {
-    display: block;
-    color: red;
-    font-weight: bold;
-    vertical-align: middle;
-}
-
-#endP2 {
+#endP1, #endP2 {
     display: block;
     color: red;
     font-weight: bold;
@@ -176,21 +132,6 @@ body {
 
 #inner {
     display: inline-block;
-}
-
-#canvasP1,
-#canvasP2 {
-    width: 45vh;
-    height: 90vh;
-}
-
-#menu {
-    width: 200px;
-}
-
-#player1,
-#player2 {
-    font-size: 1.0vw;
 }
 
 .message {
