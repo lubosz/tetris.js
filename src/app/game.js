@@ -122,7 +122,7 @@ function gamePadCallback(pad, idx, type) {
 
 function keydown(ev) {
 
-    console.log("getting key event", ev);
+    console.log("getting key event", ev.keyCode, ev);
     var handled = false;
     if (playing) {
         for (var i = 0; i < Players.length; i++) {
@@ -155,13 +155,6 @@ function keydown(ev) {
                     Players[i].actions.push(DIR.HOLD);
                     handled = true;
                     break;
-                case 37:
-                    Players[i].actions.push(DIR.UP);
-                    handled = true;
-                    break;
-                //case 37:
-                //    Players[i].actions.push(DIR.UP);
-                //    break;
                 case GeneralKEYs.ESC:
                     Players[i].lose();
                     handled = true;
