@@ -17,14 +17,14 @@ body {
 
 #canvasP1 {
     display: inline-block;
-    background: url(img/texture.jpg);
+    background: #01093a;
     border: 2px solid #333;
     opacity: 0.8;
 }
 
 #canvasP2 {
     display: inline-block;
-    background: url(img/texture.jpg);
+    background: #01093a;
     border: 2px solid #333;
     opacity: 0.8;
 }
@@ -43,7 +43,7 @@ body {
 }
 
 #avatarP1 {
-    background: url(img/491783307904.jpg);
+    background: url(img/lubosz.jpg);
 }
 
 #avatarP2 {
