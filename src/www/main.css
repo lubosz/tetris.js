@@ -1,7 +1,6 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: url(img/tetris_bg_texture.jpg);
-    color: white;
     padding: auto;
 }
 
@@ -18,19 +17,26 @@ body {
     opacity: 0.8;
     width: 45vh;
     height: 90vh;
+    margin-top: 5vh;
 }
 
-#menu {
+.hud {
     display: inline-block;
-    width: 200px;
+    width: 20vh;
+    height: 90vh;
+    margin-top: 5vh;
+    vertical-align: top;
+    opacity: 0.8;
 }
 
-#menu p {
-    margin: 0.5em 0;
+.hud div, .hud canvas {
+    margin-bottom: 5vh;
     text-align: center;
+    width: 15vh;
+    display: inline-block;
 }
 
-#menu p a {
+a {
     text-decoration: none;
 }
 
@@ -43,37 +49,24 @@ body {
 }
 
 #avatarP1, #avatarP2 {
-    display: block;
-    margin: 0 auto;
-    opacity: 0.8;
     background-size: contain;
-    height: 10vw;
-    width: 10vw;
+    height: 15vh;
 }
 
 #upcomingP1, #upcomingP2 {
-    display: block;
-    margin: 0 auto;
-    opacity: 0.8;
     background: url(img/next.png);
     background-size: contain;
-    height: 12vw;
-    width: 12vw;
+    height: 15vh;
 }
 
 #holdP1, #holdP2 {
-    display: block;
-    margin: 0 auto;
-    opacity: 0.8;
     background: url(img/hold.png);
     background-size: contain;
-    height: 12vw;
-    width: 12vw;
+    height: 15vh;
 }
 
 #nameP1, #nameP2 {
     font-weight: bold;
-    vertical-align: middle;
 }
 
 #nameP2 {
@@ -87,35 +80,22 @@ body {
 #scoreP1, #scoreP2 {
     color: white;
     font-weight: bold;
-    vertical-align: middle;
-}
-
-#connGP_P1, #connGP_P2 {
-    color: white;
-    font-weight: bold;
-    vertical-align: middle;
-    visibility: hidden;
 }
 
 #winsP1, #winsP2 {
-    display: block;
     color: white;
     font-weight: bold;
-    vertical-align: middle;
 }
 
 #rowsP1, #rowsP2 {
-    display: block;
     color: white;
     font-weight: bold;
-    vertical-align: middle;
 }
 
 #endP1, #endP2 {
     display: block;
     color: red;
     font-weight: bold;
-    vertical-align: middle;
 }
 
 #stats {
@@ -128,6 +108,11 @@ body {
 #outer {
     width: 100%;
     text-align: center;
+}
+
+body, #inner, #outer {
+    padding: 0;
+    margin: 0;
 }
 
 #inner {

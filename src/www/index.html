@@ -11,38 +11,45 @@
     <div id="react">
     </div>
     <div id="inner">
-        <div id="start" class="message">Press X to Play</div>
-        <div id="paused" class="message" style="visibility: hidden;">Paused</div>
+        <div id="messages" style="position: absolute;">
+            <div id="start" class="message">Press X to Play</div>
+            <div id="paused" class="message" style="visibility: hidden;">Paused</div>
+        </div>
+
         <div id="player1">
-            <div id="menu">
-                <p><canvas id="upcomingP1"></canvas></p>
-                <p><canvas id="avatarP1"></canvas></p>
-                <p><span id="nameP1">Lubosz</span></p>
-                <p>Score: <span id="scoreP1">00000</span></p>
-                <p>Rows: <span id="rowsP1">0</span></p>
-                <p><canvas id="holdP1"></canvas></p>
-                <p>Total wins: <span id="winsP1">0</span></p>
-                <p id="endP1"></p>
+            <div class="hud">
+                <canvas id="upcomingP1"></canvas>
+                <div id="avatarP1"></div>
+                <div>
+                    <span id="nameP1">Lubosz</span><br/>
+                    Score: <span id="scoreP1">00000</span><br/>
+                    Rows: <span id="rowsP1">0</span><br/>
+                    Total wins: <span id="winsP1">0</span><br/>
+                </div>
+                <canvas id="holdP1"></canvas>
+                <div id="endP1"></div>
             </div>
             <canvas id="canvasP1">
-                Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
+                Sorry, this game cannot be run because your browser does not support the &lt;canvas&gt; element
             </canvas>
         </div>
 
         <div id="player2">
-            <canvas id="canvasP2">
-                Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
-            </canvas>
-            <div id="menu">
-                <p><canvas id="upcomingP2"></canvas></p>
-                <p><canvas id="avatarP2"></canvas></p>
-                <p><span id="nameP2">Jessi</span></p>
-                <p>Score: <span id="scoreP2">00000</span></p>
-                <p>Rows: <span id="rowsP2">0</span></p>
-                <p><canvas id="holdP2"></canvas></p>
-                <p>Total wins: <span id="winsP2">0</span></p>
-                <p id="endP2"></p>
+            <div class="hud">
+                <canvas id="upcomingP2"></canvas>
+                <div id="avatarP2"></div>
+                <div>
+                    <span id="nameP2">Jessi</span><br/>
+                    Score: <span id="scoreP2">00000</span><br/>
+                    Rows: <span id="rowsP2">0</span><br/>
+                    Total wins: <span id="winsP2">0</span><br/>
+                </div>
+                <canvas id="holdP2"></canvas>
+                <div id="endP2"></div>
             </div>
+            <canvas id="canvasP2">
+                Sorry, this game cannot be run because your browser does not support the &lt;canvas&gt; element
+            </canvas>
         </div>
     </div>
 </div>
