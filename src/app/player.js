@@ -415,7 +415,7 @@ export class Player {
         if (this.invalid.next) {
             var padding = ((nu - this.next.type.size) / 2 - 1); // half-arsed attempt at centering next piece display
             this.uctx.save();
-            this.uctx.translate(0.5, 0.5);
+            this.uctx.scale(0.7, 0.7);
             this.uctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
             this.uctx.strokeStyle = 'white';
             this.drawPiece(this.uctx, this.next.type, 1, 1, this.next.dir);
@@ -428,7 +428,7 @@ export class Player {
         if (this.invalid.hold) {
             var padding = (nu - this.next.type.size) / 2; // half-arsed attempt at centering next piece display
             this.hctx.save();
-            this.hctx.translate(0.5, 0.5);
+            this.hctx.scale(0.7, 0.7);
             this.hctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
             this.hctx.strokeStyle = 'white';
             this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
