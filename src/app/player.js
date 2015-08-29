@@ -1,5 +1,5 @@
-import {randomPiece, DIR, nx, ny, nu, mode} from './game.jsx'
-import {get, html, sound} from './utils.jsx';
+import {randomPiece, DIR, nx, ny, nu, mode} from './game'
+import {get, html, sound} from './utils';
 
 
 function drawBlock(ctx, x, y, dx, dy, color) {

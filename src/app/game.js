@@ -1,8 +1,8 @@
-import {randomTetrisPiece} from './tetris.jsx'
-import {randomPuyoPiece} from './puyo.jsx'
-import {Player, UserInterface} from './player.jsx';
-import {get, timestamp, show, hide, sound} from './utils.jsx';
-import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from './gamepad.js';
+import {randomTetrisPiece} from './tetris'
+import {randomPuyoPiece} from './puyo'
+import {Player, UserInterface} from './player';
+import {get, timestamp, show, hide, sound} from './utils';
+import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from './gamepad';
 import _ from 'lodash';
 
 //set to "puyp" or "tetris"

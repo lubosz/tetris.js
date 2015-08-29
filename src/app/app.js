@@ -1,4 +1,4 @@
-import {run} from './game.jsx'
+import {run} from './game'
 /*
 import injectTapEventPlugin from 'react-tap-event-plugin'
 let React = require('react/addons');
