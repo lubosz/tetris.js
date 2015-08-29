@@ -1,6 +1,6 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: url(tetris_bg_texture.jpg);
+    background: url(img/tetris_bg_texture.jpg);
     color: white;
     padding: auto;
 }
@@ -17,14 +17,14 @@ body {
 
 #canvasP1 {
     display: inline-block;
-    background: url(texture.jpg);
+    background: url(img/texture.jpg);
     border: 2px solid #333;
     opacity: 0.8;
 }
 
 #canvasP2 {
     display: inline-block;
-    background: url(texture.jpg);
+    background: url(img/texture.jpg);
     border: 2px solid #333;
     opacity: 0.8;
 }
@@ -43,11 +43,11 @@ body {
 }
 
 #avatarP1 {
-    background: url(491783307904.jpg);
+    background: url(img/491783307904.jpg);
 }
 
 #avatarP2 {
-    background: url(porenta.gif);
+    background: url(img/porenta.gif);
 }
 
 #avatarP1,
@@ -65,7 +65,7 @@ body {
     display: block;
     margin: 0 auto;
     opacity: 0.8;
-    background: url(next.png);
+    background: url(img/next.png);
     background-size: contain;
     height: 12vw;
     width: 12vw;
@@ -76,7 +76,7 @@ body {
     display: block;
     margin: 0 auto;
     opacity: 0.8;
-    background: url(hold.png);
+    background: url(img/hold.png);
     background-size: contain;
     height: 12vw;
     width: 12vw;
