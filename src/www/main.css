@@ -39,7 +39,7 @@ body {
 a {
     text-decoration: none;
 }
-
+/*
 #avatarP1 {
     background: url(img/lubosz.jpg);
 }
@@ -47,12 +47,7 @@ a {
 #avatarP2 {
     background: url(img/porenta.gif);
 }
-
-#avatarP1, #avatarP2 {
-    background-size: contain;
-    height: 15vh;
-}
-
+*/
 #upcomingP1, #upcomingP2 {
     background: url(img/next.png);
     background-size: contain;
