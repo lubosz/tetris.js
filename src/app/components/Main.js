@@ -6,10 +6,8 @@ class Player extends React.Component {
         super(props);
     }
     render() {
-        let pl = "player" + this.props.number;
+        // TODO: use react, not DOM IDs
         let hold = "holdP" + this.props.number;
-        let avatar = "avatarP" + this.props.number;
-        let name = "nameP" + this.props.number;
         let score = "scoreP" + this.props.number;
         let rows = "rowsP" + this.props.number;
         let wins = "winsP" + this.props.number;
@@ -23,24 +21,40 @@ class Player extends React.Component {
             height: "15vh",
         };
 
+        let nameStyle = {
+            fontWeight: "bold",
+            color: this.props.color
+        };
+
+        let playerStyle = {
+            display: "inline-block",
+            padding: 0,
+            fontSize: "1.0vw"
+        }
+
+        let tableStyle = {
+            display: "inline-block",
+            textAlign: "right"
+        }
+
         return (
-            <div id={pl}>
+            <div style={playerStyle}>
                 <div className="hud">
-                    <canvas id={hold}></canvas>
-                    <div style={avatarStyle}></div>
+                    <canvas id={hold} />
+                    <div style={avatarStyle} />
                     <div>
-                        <span id={name}>{this.props.name}</span><br/>
-                        Score: <span id={score}>00000</span><br/>
-                        Rows: <span id={rows}>0</span><br/>
-                        Total wins: <span id={wins}>0</span><br/>
+                        <span style={nameStyle}>{this.props.name}</span><br/>
+                        <table style={tableStyle}>
+                            <tr><td>Score</td><td id={score}>00000</td></tr>
+                            <tr><td>Rows</td><td id={rows}>0</td></tr>
+                            <tr><td>Wins</td><td id={wins}>0</td></tr>
+                        </table>
                     </div>
-                    <div id={end}></div>
+                    <div id={end} />
                 </div>
-                <canvas id={canvas}>
-                    Sorry, this game cannot be run because your browser does not support the &lt;canvas&gt; element
-                </canvas>
+                <canvas id={canvas} />
                 <div className="hud">
-                    <canvas id={upcoming}></canvas>
+                    <canvas id={upcoming} />
                 </div>
             </div>
         );
@@ -76,8 +90,8 @@ class Main extends React.Component {
             <div id="outer">
                 <div id="inner">
                     <Messages />
-                    <Player number="1" name="Lubosz" background="lubosz.jpg" />
-                    <Player number="2" name="Jessi" background="porenta.gif" />
+                    <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" />
+                    <Player number="2" name="Jessi" background="porenta.gif" color="purple" />
                 </div>
             </div>
         );

@@ -4,12 +4,6 @@ body {
     padding: auto;
 }
 
-#player1, #player2 {
-    display: inline-block;
-    padding: 0;
-    font-size: 1.0vw;
-}
-
 #canvasP1, #canvasP2 {
     display: inline-block;
     background: #01093a;
@@ -52,31 +46,10 @@ a {
     height: 15vh;
 }
 
-#nameP1, #nameP2 {
-    font-weight: bold;
-}
-
-#nameP2 {
-    color: purple;
-}
-
-#nameP1 {
-    color: blue;
-}
-
-#scoreP1, #scoreP2 {
+#scoreP1, #scoreP2, #winsP1, #winsP2, #rowsP1, #rowsP2 {
     color: white;
     font-weight: bold;
-}
-
-#winsP1, #winsP2 {
-    color: white;
-    font-weight: bold;
-}
-
-#rowsP1, #rowsP2 {
-    color: white;
-    font-weight: bold;
+    text-align: left;
 }
 
 #endP1, #endP2 {
