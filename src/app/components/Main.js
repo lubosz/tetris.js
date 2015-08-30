@@ -18,7 +18,7 @@ class Player extends React.Component {
         let upcoming = "upcomingP" + this.props.number;
 
         let avatarStyle = {
-            background: "url(img/lubosz.jpg)",
+            background: "url(img/avatars/" + this.props.background + ")",
             backgroundSize: "contain",
             height: "15vh",
         };
@@ -76,8 +76,8 @@ class Main extends React.Component {
             <div id="outer">
                 <div id="inner">
                     <Messages />
-                    <Player number="1" name="Lubosz" />
-                    <Player number="2" name="Jessi" />
+                    <Player number="1" name="Lubosz" background="lubosz.jpg" />
+                    <Player number="2" name="Jessi" background="porenta.gif" />
                 </div>
             </div>
         );

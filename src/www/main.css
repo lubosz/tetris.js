@@ -39,15 +39,7 @@ body {
 a {
     text-decoration: none;
 }
-/*
-#avatarP1 {
-    background: url(img/lubosz.jpg);
-}
 
-#avatarP2 {
-    background: url(img/porenta.gif);
-}
-*/
 #upcomingP1, #upcomingP2 {
     background: url(img/next.png);
     background-size: contain;
