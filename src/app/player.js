@@ -397,6 +397,17 @@ export class Player {
             this.ctx.strokeStyle = 'white';
             this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
 
+            //ghost
+            this.ctx.globalAlpha = 0.4;
+
+            let y = 0;
+            while (!this.occupied(this.current.type, this.current.x, y+1, this.current.dir)) {
+                y++;
+            }
+
+            this.drawPiece(this.ctx, this.current.type, this.current.x, y, this.current.dir);
+            this.ctx.globalAlpha = 1.0;
+
             var x, y, block;
             for (y = 0; y < ny; y++) {
                 for (x = 0; x < nx; x++) {
