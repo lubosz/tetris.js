@@ -1,39 +1,7 @@
 import {randomPiece, DIR, nx, ny, nu, mode} from './game'
 import {get, html, sound} from './utils';
-
-
-function drawBlock(ctx, x, y, dx, dy, color) {
-    ctx.fillStyle = color;
-    ctx.fillRect(x * dx, y * dy, dx, dy);
-    ctx.strokeRect(x * dx, y * dy, dx, dy)
-}
-
-function setBlock(x, y, blocks, type) {
-    blocks[x] = blocks[x] || [];
-    blocks[x][y] = type;
-
-    return blocks;
-}
-
-function eachblock(type, x, y, dir, fn) {
-    //---------------------------------------------------
-    // do the bit manipulation and iterate through each
-    // occupied block (x,y) for a given piece applying fn
-    //---------------------------------------------------
-    var bit, row = 0,
-        col = 0,
-        blocks = type.blocks[dir];
-
-    for (bit = 0x8000; bit > 0; bit = bit >> 1) {
-        if (blocks & bit) {
-            fn(x + col, y + row);
-        }
-        if (++col === 4) {
-            col = 0;
-            ++row;
-        }
-    }
-}
+import {drawBlock} from './renderer';
+import {setBlock, eachblock} from './logic';
 
 export class UserInterface {
     constructor(scoreView, rowsView, winsView, endView) {
