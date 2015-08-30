@@ -43,15 +43,24 @@ function queryGamePads(gamePadCallback) {
             _.each(pad.buttons, function (button, idx) {
                 if (button.pressed) {
                     pressed[idx] = true;
-                    if (Object.keys(last_pressed[pad.index]).indexOf(idx.toString()) < 0)
+                    let thisPadsLastPressed = last_pressed[pad.index];
+                    if (thisPadsLastPressed != null) {
+                        let lastPressedKeys = Object.keys(thisPadsLastPressed);
+                        // if was not pressed last event
+                        if(lastPressedKeys.indexOf(idx.toString()) < 0)
+                            gamePadCallback(pad, idx, "pressed");
+                    } else {
+                        // if was never pressed before
                         gamePadCallback(pad, idx, "pressed");
+                    }
                 }
             });
             _.each(last_pressed[pad.index], function (isPressed, idx) {
                 if (Object.keys(pressed).indexOf(idx) < 0)
                     gamePadCallback(pad, idx, "released");
             });
-            last_pressed[pad.index] = Object.assign({}, pressed);
+            if (pressed != undefined)
+                last_pressed[pad.index] = Object.assign({}, pressed);
         }
     });
 }
