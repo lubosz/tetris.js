@@ -245,9 +245,6 @@ function run() {
         if (!paused) {
             now = timestamp();
             update(Math.min(1, (now - last) / 1000.0));
-            Players.forEach(p => {
-                p.draw()
-            });
             last = now;
         }
         requestAnimationFrame(frame, Players[0].canvas);

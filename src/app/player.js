@@ -38,12 +38,10 @@ export class Player {
         this.dy = 0;
         this.actions = [];
         this.KEYs = {};
-        this.invalid = {};
         this.wins = 0;
         this.score = 0;
         this.hold = null;
         this.playerNum = playerNum;
-        this.invalid.court = false;
         this.holdUsed = false;
         this.speed =
         {
@@ -162,7 +160,7 @@ export class Player {
         if (this.unoccupied(this.current.type, x, y, this.current.dir)) {
             this.current.x = x;
             this.current.y = y;
-            this.invalid.court = true;
+            this.drawCourt();
             return true;
         }
         else {
@@ -191,7 +189,7 @@ export class Player {
 
         if (turned) {
             this.current.dir = dir;
-            this.invalid.court = true;
+            this.drawCourt();
         }
     }
 
@@ -262,9 +260,8 @@ export class Player {
         });
         this.blocks = playerBlocks;
 
-        if (inval) {
-            this.invalid.court = true;
-        }
+        if (inval)
+            this.drawCourt();
 
         if (mode == "puyu") {
             //check if a bean is still falling
@@ -349,71 +346,51 @@ export class Player {
         }
     }
 
-    draw() {
-        this.ctx.save();
-        this.ctx.lineWidth = 1;
-        this.ctx.translate(0.5, 0.5); // for crisp 1px black lines
-        this.drawCourt();
-        this.drawNext();
-        this.drawHold();
-        this.ctx.restore();
-    }
-
     drawCourt() {
-        if (this.invalid.court) {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.strokeStyle = 'white';
-            this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.strokeStyle = 'white';
+        this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
 
-            //ghost
-            this.ctx.globalAlpha = 0.4;
+        //ghost
+        this.ctx.globalAlpha = 0.4;
 
-            let y = 0;
-            while (!this.occupied(this.current.type, this.current.x, y+1, this.current.dir)) {
-                y++;
-            }
+        let y = 0;
+        while (!this.occupied(this.current.type, this.current.x, y+1, this.current.dir)) {
+            y++;
+        }
 
-            this.drawPiece(this.ctx, this.current.type, this.current.x, y, this.current.dir);
-            this.ctx.globalAlpha = 1.0;
+        this.drawPiece(this.ctx, this.current.type, this.current.x, y, this.current.dir);
+        this.ctx.globalAlpha = 1.0;
 
-            var x, y, block;
-            for (y = 0; y < ny; y++) {
-                for (x = 0; x < nx; x++) {
-                    if (block = (this.blocks && this.blocks[x] ? this.blocks[x][y] : null)) {
-                        drawBlock(this.ctx, x, y, this.dx, this.dy, block.color);
-                    }
+        let x, block;
+        for (y = 0; y < ny; y++) {
+            for (x = 0; x < nx; x++) {
+                if (block = (this.blocks && this.blocks[x] ? this.blocks[x][y] : null)) {
+                    drawBlock(this.ctx, x, y, this.dx, this.dy, block.color);
                 }
             }
-
-            this.ctx.strokeRect(0, 0, nx * this.dx - 1, ny * this.dy - 1); // court boundary
-            this.invalid.court = false;
         }
+        this.ctx.strokeRect(0, 0, nx * this.dx - 1, ny * this.dy - 1); // court boundary
     }
 
     drawNext() {
-        if (this.invalid.next) {
-            var padding = ((nu - this.next.type.size) / 2 - 1); // half-arsed attempt at centering next piece display
-            this.uctx.save();
-            this.uctx.scale(0.7, 0.7);
-            this.uctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
-            this.uctx.strokeStyle = 'white';
-            this.drawPiece(this.uctx, this.next.type, 1, 1, this.next.dir);
-            this.uctx.restore();
-            this.invalid.next = false;
-        }
+        var padding = ((nu - this.next.type.size) / 2 - 1); // half-arsed attempt at centering next piece display
+        this.uctx.save();
+        this.uctx.scale(0.7, 0.7);
+        this.uctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
+        this.uctx.strokeStyle = 'white';
+        this.drawPiece(this.uctx, this.next.type, 1, 1, this.next.dir);
+        this.uctx.restore();
     }
 
     drawHold() {
-        if (this.invalid.hold) {
-            var padding = (nu - this.next.type.size) / 2; // half-arsed attempt at centering next piece display
-            this.hctx.save();
-            this.hctx.scale(0.7, 0.7);
-            this.hctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
-            this.hctx.strokeStyle = 'white';
-            this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
-            this.hctx.restore();
-            this.invalid.hold = false;
-        }
+        var padding = (nu - this.hold.type.size) / 2; // half-arsed attempt at centering next piece display
+        this.hctx.save();
+        this.hctx.scale(0.7, 0.7);
+        this.hctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
+        this.hctx.strokeStyle = 'white';
+        this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
+        this.hctx.restore();
     }
 
     drawPiece(ctx, type, x, y, dir) {
@@ -471,7 +448,8 @@ export class Player {
 
     clearBlocks() {
         this.blocks = [];
-        this.invalid.court = true;
+        if (this.current)
+            this.drawCourt();
     }
 
     clearActions() {
@@ -480,13 +458,13 @@ export class Player {
 
     setCurrentPiece(piece) {
         this.current = piece || randomPiece();
-        this.invalid.court = true;
+        this.drawCourt();
         this.holdUsed = false;
     }
 
     setNextPiece(piece) {
         this.next = piece || randomPiece();
-        this.invalid.next = true;
+        this.drawNext();
     }
 
     setHold(piece) {
@@ -507,7 +485,7 @@ export class Player {
                 this.lose();
             }
 
-            this.invalid.hold = true;
+            this.drawHold();
             this.holdUsed = true;
         }
     }
@@ -519,11 +497,16 @@ export class Player {
         this.ucanvas.height = this.ucanvas.clientHeight;
         this.hcanvas.width = this.hcanvas.clientWidth;
         this.hcanvas.height = this.hcanvas.clientHeight;
-        this.invalid.court = true;
-        this.invalid.next = true;
 
         this.dx = this.canvas.width / nx;      // pixel size of a single tetris block
         this.dy = this.canvas.height / ny;     // (ditto)
+
+        if (this.current)
+            this.drawCourt();
+        if (this.hold)
+            this.drawHold();
+        if (this.next)
+            this.drawNext();
     }
 
     reset() {
