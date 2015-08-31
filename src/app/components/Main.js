@@ -1,26 +1,36 @@
 import React from 'react';
 import Player from './Player';
-import {get, timestamp, show, hide, sound} from '../utils';
+import {timestamp, sound} from '../utils';
 import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from '../gamepad';
 import _ from 'lodash';
-import {DIR} from '../logic'
-
+import {DIR} from '../logic';
 
 class Messages extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            visibility: 'visible',
+            text: 'Press X to Play'
+        }
+    }
+    setText(text) {
+        this.setState({text: text});
+    }
+    hide() {
+        this.setState({visibility: 'hidden'});
+    }
+    show() {
+        this.setState({visibility: 'visible'});
     }
     render() {
-        let hiddenStyle = {
-            visibility: 'hidden'
-        };
-        let absoluteStyle = {
-            position: 'absolute'
+        let messageStyle = {
+            visibility: this.state.visibility,
+            position: 'absolute',
+            fontSize: '2vh'
         };
         return (
-            <div id="messages" style={absoluteStyle}>
-                <div id="start" className="message">Press X to Play</div>
-                <div id="paused" className="message" style={hiddenStyle}>Paused</div>
+            <div style={messageStyle}>
+                {this.state.text}
             </div>
         );
     }
@@ -243,16 +253,17 @@ class Main extends React.Component {
     play() {
         if (this.playing) return;
         this.playing = true;
-        hide('start');
+        this.refs.messages.hide();
         this.reset();
     }
 
     togglePause() {
         this.paused = !this.paused;
-        if (this.paused)
-            show('paused');
-        else
-            hide('paused');
+        if (this.paused) {
+            this.refs.messages.setText("Paused");
+            this.refs.messages.show();
+        } else
+            this.refs.messages.hide();
     }
 
     resize() {
@@ -290,7 +301,7 @@ class Main extends React.Component {
         return (
             <div id="outer">
                 <div id="inner">
-                    <Messages />
+                    <Messages ref="messages" />
                     <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
                     <Player number="2" name="Jessi" background="porenta.gif" color="purple" ref="player2" />
                 </div>
