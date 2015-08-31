@@ -256,9 +256,10 @@ class Main extends React.Component {
     }
 
     resize() {
-        this.players.forEach(p => {
-            p.resize()
-        });
+        if (this.players)
+            this.players.forEach(p => {
+                p.resize()
+            });
     }
 
     reset() {
