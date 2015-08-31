@@ -243,7 +243,7 @@ class Main extends React.Component {
                 self.update(Math.min(1, (now - self.last) / 1000.0));
                 self.last = now;
             }
-            requestAnimationFrame(frame, self.players[0].canvas);
+            requestAnimationFrame(frame);
         }
 
         // start the first frame
