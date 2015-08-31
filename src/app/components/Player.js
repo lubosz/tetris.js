@@ -537,7 +537,7 @@ class Player extends React.Component {
         let avatarStyle = {
             background: "url(img/avatars/" + this.props.background + ")",
             backgroundSize: "contain",
-            height: "15vh",
+            height: "15vh"
         };
 
         let nameStyle = {
@@ -549,12 +549,12 @@ class Player extends React.Component {
             display: "inline-block",
             padding: 0,
             fontSize: "1.0vw"
-        }
+        };
 
         let tableStyle = {
             display: "inline-block",
             textAlign: "right"
-        }
+        };
 
         let statStyle = {
             color: "white",
