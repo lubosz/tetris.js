@@ -3,7 +3,7 @@ import {get, html, sound} from './utils';
 import {drawBlock} from './renderer';
 import {setBlock, eachblock} from './logic';
 
-export class UserInterface {
+class UserInterface {
     constructor(scoreView, rowsView, winsView, endView) {
         this.scoreView = scoreView;
         this.rowsView = rowsView;
@@ -32,7 +32,7 @@ export class UserInterface {
 // This is the Player class containing all Player's
 // Information
 //-------------------------------------------------
-export class Player {
+class PlayerNonReact {
     constructor(playerNum) {
         this.dx = 0;
         this.dy = 0;
@@ -529,4 +529,4 @@ export class Player {
     }
 
 }
-export default Player;
+export {PlayerNonReact,UserInterface};

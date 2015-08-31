@@ -10,6 +10,10 @@ var timeout_ids = {};
 const repeat_interval = 80; //ms
 const repeat_timeout = 300; //ms
 
+function haveGamePads() {
+    return "getGamepads" in navigator;
+}
+
 function gamepadHandler(event, connecting) {
     var pad = event.gamepad;
     if (connecting) {
@@ -65,4 +69,4 @@ function queryGamePads(gamePadCallback) {
     });
 }
 
-export {gamepadHandler, queryGamePads, clearDelayed, delayedPressed};
+export {gamepadHandler, queryGamePads, clearDelayed, delayedPressed, haveGamePads};
