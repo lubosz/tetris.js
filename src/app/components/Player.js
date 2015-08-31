@@ -181,7 +181,6 @@ class Player extends React.Component {
         // prevent arrow keys from scrolling the page (supported in IE9+ and all other browsers)
         if (handled)
             ev.preventDefault();
-
     }
 
     setOpponent(player) {

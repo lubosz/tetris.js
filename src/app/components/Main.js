@@ -21,7 +21,6 @@ class Game extends React.Component {
     componentDidMount() {
         this.initPlayers();
         this.addEvents();
-        console.log(this.players, this.players.size)
         this.players.forEach(p => {
             p.resize();
             p.reset();
