@@ -6,7 +6,7 @@ import _ from 'lodash';
 import {DIR} from '../logic';
 import Message from './Message'
 
-class Main extends React.Component {
+class Game extends React.Component {
     constructor(props) {
         super(props);
         this.playing = false;
@@ -21,6 +21,7 @@ class Main extends React.Component {
     componentDidMount() {
         this.initPlayers();
         this.addEvents();
+        console.log(this.players, this.players.size)
         this.players.forEach(p => {
             p.resize();
             p.reset();
@@ -46,6 +47,52 @@ class Main extends React.Component {
         }
         // start the first frame
         frame();
+    }
+
+    play() {
+        if (this.playing) return;
+        this.playing = true;
+        this.refs.message.hide();
+        this.reset();
+    }
+
+    togglePause() {
+        this.paused = !this.paused;
+        if (this.paused) {
+            this.refs.message.setText("Paused");
+            this.refs.message.show();
+        } else
+            this.refs.message.hide();
+    }
+
+    resize() {
+        if (this.players)
+            this.players.forEach(p => {
+                p.resize()
+            });
+    }
+
+    reset() {
+        this.players.forEach(p => {
+            p.reset()
+        });
+    }
+
+    addEvents() {
+        addEventListener('resize', this.resize);
+        addEventListener("gamepadconnected", function (e) {
+            gamepadHandler(e, true);
+        });
+        addEventListener("gamepaddisconnected", function (e) {
+            gamepadHandler(e, false);
+        });
+    }
+}
+
+
+class Battle extends Game {
+    constructor(props) {
+        super(props);
     }
 
     end(player) {
@@ -95,46 +142,6 @@ class Main extends React.Component {
         this.players.push(this.refs.player1);
         this.players.push(this.refs.player2);
     }
-
-    play() {
-        if (this.playing) return;
-        this.playing = true;
-        this.refs.message.hide();
-        this.reset();
-    }
-
-    togglePause() {
-        this.paused = !this.paused;
-        if (this.paused) {
-            this.refs.message.setText("Paused");
-            this.refs.message.show();
-        } else
-            this.refs.message.hide();
-    }
-
-    resize() {
-        if (this.players)
-            this.players.forEach(p => {
-                p.resize()
-            });
-    }
-
-    reset() {
-        this.players.forEach(p => {
-            p.reset()
-        });
-    }
-
-    addEvents() {
-        addEventListener('resize', this.resize);
-        addEventListener("gamepadconnected", function (e) {
-            gamepadHandler(e, true);
-        });
-        addEventListener("gamepaddisconnected", function (e) {
-            gamepadHandler(e, false);
-        });
-    }
-
     render() {
         return (
             <div id="outer">
@@ -149,4 +156,41 @@ class Main extends React.Component {
     }
 }
 
-export default Main;
+
+class Marathon extends Game {
+    constructor(props) {
+        super(props);
+    }
+    end(player) {
+        player.setEnd('LOSE');
+        this.playing = false;
+    }
+    initPlayers() {
+        //player 1 KEYs: left_arrow, up_arrow, right_arrow, down_arrow, o, p, i
+        this.refs.player1.KEYs =
+        {
+            LEFT: 37,
+            UP: 38,
+            RIGHT: 39,
+            DOWN: 40,
+            TURNLEFT: 79,
+            TURNRIGHT: 80,
+            HOLD: 73
+        };
+        this.refs.player1.bindGame(this);
+        addEventListener('keydown', this.refs.player1.keyboardCallback);
+        this.players.push(this.refs.player1);
+    }
+    render() {
+        return (
+            <div id="outer">
+                <div id="inner">
+                    <Message ref="message" />
+                    <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
+                </div>
+            </div>
+        );
+    }
+}
+
+export {Battle, Marathon};

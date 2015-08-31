@@ -177,7 +177,8 @@ class Player extends React.Component {
         this.opponent = player;
     }
     addOpponentLines(n) {
-        this.opponent.refs.court.receiveLines(n);
+        if (this.opponent)
+            this.opponent.refs.court.receiveLines(n);
     }
     dropCb() {
         this.refs.court.setCurrentPiece(this.refs.next.piece);

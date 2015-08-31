@@ -1,4 +1,5 @@
 import React from 'react'
-import Main from './components/Main'
+import { Battle, Marathon} from './components/Main'
 
-React.render(<Main />, react);
+//React.render(<Battle />, react);
+React.render(<Marathon />, react);
