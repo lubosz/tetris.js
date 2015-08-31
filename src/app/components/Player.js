@@ -4,55 +4,52 @@ import {randomPiece, nx, ny, nu, mode, DIR, setBlock, eachblock} from '../logic'
 import {get, html, sound} from '../utils';
 import {drawBlock} from '../renderer';
 
-class Player extends React.Component {
+class Court extends React.Component {
     constructor(props) {
         super(props);
         this.dx = 0;
         this.dy = 0;
-        this.actions = [];
-        this.KEYs = {};
-        this.wins = 0;
-        this.score = 0;
-        this.hold = null;
-        this.holdUsed = false;
         this.speed =
         {
             start: 0.6,
             decrement: 0.005,
             min: 0.1
         }; // how long before piece drops by 1 row (seconds)
-
-        //gamepad timestamp variables
-        this.lastCall = {};
-        this.lastCall.arrow_down = 0;
-        this.lastCall.arrow_left = 0;
-        this.lastCall.arrow_right = 0;
-        this.lastCall.arrow_up = 0;
-        this.lastCall.x = 0;
-        this.lastCall.o = 0;
-        this.lastCall.r1 = 0;
-
         this.state = {
-            score: 0,
             rows: 0,
-            wins: 0,
-            end: ''
+            score: 0
         };
-
         this.updateStep();
-
     }
 
     componentDidMount() {
         this.canvas = this.refs.court.getDOMNode();
-        this.ucanvas = this.refs.next.getDOMNode();
-        this.hcanvas = this.refs.hold.getDOMNode();
-
         this.ctx = this.canvas.getContext('2d');
-        this.uctx = this.ucanvas.getContext('2d');
-        this.hctx = this.hcanvas.getContext('2d');
     }
 
+    updateStep () {
+        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.state.rows));
+    }
+
+    setRows(n) {
+        this.setState({rows : n});
+        this.updateStep();
+    }
+    addRows(n) {
+        this.setRows(this.state.rows + n);
+    }
+    setScore(n) {
+        this.setState({score: n});
+    }
+    addScore(n) {
+        this.setScore(this.state.score + n);
+    }
+
+    checkLose() {
+        if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
+            this.lose();
+        }
+    }
 //-----------------------------------------------------
 // check if a piece can fit into a position in the grid
 //-----------------------------------------------------
@@ -95,32 +92,6 @@ class Player extends React.Component {
         return !this.occupied(type, x, y, dir);
     }
 
-    handle(action) {
-        switch (action) {
-            case DIR.LEFT:
-                this.move(DIR.LEFT);
-                break;
-            case DIR.RIGHT:
-                this.move(DIR.RIGHT);
-                break;
-            case DIR.UP:
-                this.instantDrop();
-                break;
-            case DIR.DOWN:
-                this.drop();
-                break;
-            case DIR.TURNLEFT:
-                this.rotate(DIR.TURNLEFT);
-                break;
-            case DIR.TURNRIGHT:
-                this.rotate(DIR.TURNRIGHT);
-                break;
-            case DIR.HOLD:
-                this.setHold(this.current);
-                break;
-        }
-    }
-
     move(dir) {
         var x = this.current.x,
             y = this.current.y;
@@ -138,7 +109,7 @@ class Player extends React.Component {
         if (this.unoccupied(this.current.type, x, y, this.current.dir)) {
             this.current.x = x;
             this.current.y = y;
-            this.drawCourt();
+            this.draw();
             return true;
         }
         else {
@@ -167,7 +138,7 @@ class Player extends React.Component {
 
         if (turned) {
             this.current.dir = dir;
-            this.drawCourt();
+            this.draw();
         }
     }
 
@@ -176,16 +147,11 @@ class Player extends React.Component {
         while (flying) {
             flying = this.move(DIR.DOWN);
         }
-
         this.addScore(10);
         this.dropPiece();
         this.removeLines();
-        this.setCurrentPiece(this.next);
-        this.setNextPiece(randomPiece());
-        this.clearActions();
-        if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
-            this.lose();
-        }
+        this.dropCb();
+        this.checkLose();
     }
 
     puyuGravityDrop() {
@@ -205,12 +171,8 @@ class Player extends React.Component {
         this.addScore(10);
         this.dropPiece();
         this.removeLines();
-        this.setCurrentPiece(this.next);
-        this.setNextPiece(randomPiece());
-        this.clearActions();
-        if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
-            this.lose();
-        }
+        this.dropCb();
+        this.checkLose();
     }
 
     drop() {
@@ -218,12 +180,8 @@ class Player extends React.Component {
             this.addScore(10);
             this.dropPiece();
             this.removeLines();
-            this.setCurrentPiece(this.next);
-            this.setNextPiece(randomPiece());
-            this.clearActions();
-            if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
-                this.lose();
-            }
+            this.dropCb();
+            this.checkLose();
         }
     }
 
@@ -239,7 +197,7 @@ class Player extends React.Component {
         this.blocks = playerBlocks;
 
         if (inval)
-            this.drawCourt();
+            this.draw();
 
         if (mode == "puyu") {
             //check if a bean is still falling
@@ -293,14 +251,6 @@ class Player extends React.Component {
         }
     }
 
-    setOpponent(player) {
-        this.opponent = player;
-    }
-
-    addOpponentLines(n) {
-        this.opponent.receiveLines(n);
-    }
-
     receiveLines(n) {
         var gap = Math.floor(Math.random() * nx);
 
@@ -324,7 +274,11 @@ class Player extends React.Component {
         }
     }
 
-    drawCourt() {
+    draw() {
+
+        if (!this.current)
+            return;
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.strokeStyle = 'white';
         this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
@@ -351,26 +305,6 @@ class Player extends React.Component {
         this.ctx.strokeRect(0, 0, nx * this.dx - 1, ny * this.dy - 1); // court boundary
     }
 
-    drawNext() {
-        var padding = ((nu - this.next.type.size) / 2 - 1); // half-arsed attempt at centering next piece display
-        this.uctx.save();
-        this.uctx.scale(0.7, 0.7);
-        this.uctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
-        this.uctx.strokeStyle = 'white';
-        this.drawPiece(this.uctx, this.next.type, 1, 1, this.next.dir);
-        this.uctx.restore();
-    }
-
-    drawHold() {
-        var padding = (nu - this.hold.type.size) / 2; // half-arsed attempt at centering next piece display
-        this.hctx.save();
-        this.hctx.scale(0.7, 0.7);
-        this.hctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
-        this.hctx.strokeStyle = 'white';
-        this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
-        this.hctx.restore();
-    }
-
     drawPiece(ctx, type, x, y, dir) {
         var dx = this.dx;
         var dy = this.dy;
@@ -379,85 +313,15 @@ class Player extends React.Component {
         });
     }
 
-    setLoseCallback(loseCb) {
-        this.loseCb = loseCb;
-    }
-
-    lose() {
-        this.loseCb(this);
-    }
-
-    setEnd(win) {
-        this.setState({end : win});
-    }
-
-    setScore(n) {
-        this.setState({score: n});
-    }
-
-    addScore(n) {
-        this.setScore(this.state.score + n);
-    }
-
-    updateStep () {
-        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.state.rows));
-    }
-
-    setRows(n) {
-        this.setState({rows : n});
-        this.updateStep();
-    }
-
-    incrWins() {
-        this.setState({wins : this.state.wins + 1});
-    }
-
-    addRows(n) {
-        this.setRows(this.state.rows + n);
-    }
-
     clearBlocks() {
         this.blocks = [];
         if (this.current)
-            this.drawCourt();
-    }
-
-    clearActions() {
-        this.actions = [];
+            this.draw();
     }
 
     setCurrentPiece(piece) {
         this.current = piece || randomPiece();
-        this.drawCourt();
-        this.holdUsed = false;
-    }
-
-    setNextPiece(piece) {
-        this.next = piece || randomPiece();
-        this.drawNext();
-    }
-
-    setHold(piece) {
-        if (!this.holdUsed) {
-            if (this.hold == undefined) {
-                this.hold = piece;
-                this.setCurrentPiece(this.next);
-                this.setNextPiece(randomPiece());
-            }
-            else {
-                this.setCurrentPiece(this.hold);
-                this.hold = piece;
-            }
-
-            this.current.y = -2;
-
-            if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
-                this.lose();
-            }
-
-            this.drawHold();
-            this.holdUsed = true;
-        }
+        this.draw();
     }
 
     resize() {
@@ -465,16 +329,197 @@ class Player extends React.Component {
             return;
         this.canvas.width = this.canvas.clientWidth; // set canvas logical size equal to its physical size
         this.canvas.height = this.canvas.clientHeight; // (ditto)
-        this.ucanvas.width = this.ucanvas.clientWidth;
-        this.ucanvas.height = this.ucanvas.clientHeight;
-        this.hcanvas.width = this.hcanvas.clientWidth;
-        this.hcanvas.height = this.hcanvas.clientHeight;
 
         this.dx = this.canvas.width / nx;      // pixel size of a single tetris block
         this.dy = this.canvas.height / ny;     // (ditto)
 
         if (this.current)
-            this.drawCourt();
+            this.draw();
+    }
+
+    reset() {
+        this.dt = 0;
+        this.clearBlocks();
+    }
+
+    update(idt) {
+        this.dt = this.dt + idt;
+        if (this.dt > this.step) {
+            this.dt = this.dt - this.step;
+            this.drop();
+        }
+    }
+
+    render() {
+        let style = {
+            display: 'inline-block',
+            background: '#01093a',
+            border: '2px solid #333',
+            opacity: 0.8,
+            width: '45vh',
+            height: '90vh',
+            marginTop: '5vh'
+        };
+        return (
+            <canvas style={style} ref="court" />
+        );
+    }
+}
+
+class Player extends React.Component {
+    constructor(props) {
+        super(props);
+        this.actions = [];
+        this.KEYs = {};
+        this.wins = 0;
+        this.score = 0;
+        this.hold = null;
+
+        //gamepad timestamp variables
+        this.lastCall = {};
+        this.lastCall.arrow_down = 0;
+        this.lastCall.arrow_left = 0;
+        this.lastCall.arrow_right = 0;
+        this.lastCall.arrow_up = 0;
+        this.lastCall.x = 0;
+        this.lastCall.o = 0;
+        this.lastCall.r1 = 0;
+
+        this.state = {
+            score: 0,
+            rows: 0,
+            wins: 0,
+            end: ''
+        };
+    }
+
+    componentDidMount() {
+        this.ucanvas = this.refs.next.getDOMNode();
+        this.hcanvas = this.refs.hold.getDOMNode();
+
+        this.uctx = this.ucanvas.getContext('2d');
+        this.hctx = this.hcanvas.getContext('2d');
+
+        this.refs.court.dropCb = this.dropCb.bind(this);
+        this.refs.court.addOpponentLines = this.addOpponentLines.bind(this);
+        this.refs.court.lose = this.lose.bind(this);
+    }
+
+    handle(action) {
+        switch (action) {
+            case DIR.LEFT:
+                this.refs.court.move(DIR.LEFT);
+                break;
+            case DIR.RIGHT:
+                this.refs.court.move(DIR.RIGHT);
+                break;
+            case DIR.UP:
+                this.refs.court.instantDrop();
+                break;
+            case DIR.DOWN:
+                this.refs.court.drop();
+                break;
+            case DIR.TURNLEFT:
+                this.refs.court.rotate(DIR.TURNLEFT);
+                break;
+            case DIR.TURNRIGHT:
+                this.refs.court.rotate(DIR.TURNRIGHT);
+                break;
+            case DIR.HOLD:
+                this.setHold();
+                break;
+        }
+    }
+
+    setOpponent(player) {
+        this.opponent = player;
+    }
+
+    addOpponentLines(n) {
+        this.opponent.refs.court.receiveLines(n);
+    }
+
+    dropCb() {
+        this.refs.court.setCurrentPiece(this.next);
+        this.setNextPiece(randomPiece());
+        this.clearActions();
+    }
+
+    drawNext() {
+        // TODO: center block in box
+        // half-arsed attempt at centering next piece display
+        // var padding = ((nu - this.next.type.size) / 2 - 1);
+        this.uctx.save();
+        this.uctx.scale(0.7, 0.7);
+        this.uctx.clearRect(0, 0, nu * this.refs.court.dx, nu * this.refs.court.dy);
+        this.uctx.strokeStyle = 'white';
+        this.drawPiece(this.uctx, this.next.type, 1, 1, this.next.dir);
+        this.uctx.restore();
+    }
+
+    drawHold() {
+        // TODO: center block in box
+        // half-arsed attempt at centering next piece display
+        // var padding = (nu - this.hold.type.size) / 2;
+        this.hctx.save();
+        this.hctx.scale(0.7, 0.7);
+        this.hctx.clearRect(0, 0, nu * this.refs.court.dx, nu * this.refs.court.dy);
+        this.hctx.strokeStyle = 'white';
+        this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
+        this.hctx.restore();
+    }
+
+    drawPiece(ctx, type, x, y, dir) {
+        var dx = this.refs.court.dx;
+        var dy = this.refs.court.dy;
+        eachblock(type, x, y, dir, function (x, y) {
+            drawBlock(ctx, x, y, dx, dy, type.color);
+        });
+    }
+
+    setLoseCallback(loseCb) {
+        this.loseCb = loseCb;
+    }
+    lose() {
+        this.loseCb(this);
+    }
+    setEnd(win) {
+        this.setState({end : win});
+    }
+    incrWins() {
+        this.setState({wins : this.state.wins + 1});
+    }
+    clearActions() {
+        this.actions = [];
+    }
+
+    setNextPiece(piece) {
+        this.next = piece || randomPiece();
+        this.drawNext();
+    }
+
+    setHold() {
+        let toHold = this.refs.court.current;
+        if (this.hold == undefined)
+            this.refs.court.setCurrentPiece(this.next);
+        else
+            this.refs.court.setCurrentPiece(this.hold);
+        this.hold = toHold;
+        this.setNextPiece(randomPiece());
+        this.refs.court.current.y = -2;
+        this.refs.court.checkLose();
+        this.drawHold();
+    }
+
+    resize() {
+        this.ucanvas.width = this.ucanvas.clientWidth;
+        this.ucanvas.height = this.ucanvas.clientHeight;
+        this.hcanvas.width = this.hcanvas.clientWidth;
+        this.hcanvas.height = this.hcanvas.clientHeight;
+
+        this.refs.court.resize();
+        this.refs.court.draw();
+
         if (this.hold)
             this.drawHold();
         if (this.next)
@@ -482,12 +527,10 @@ class Player extends React.Component {
     }
 
     reset() {
-        this.dt = 0;
         this.clearActions();
-        this.clearBlocks();
-        this.setCurrentPiece(this.next);
+        this.refs.court.reset();
+        this.refs.court.setCurrentPiece(this.next);
         this.setNextPiece();
-
         this.setState({
             score: 0,
             rows : 0,
@@ -497,11 +540,7 @@ class Player extends React.Component {
 
     update(idt) {
         this.handle(this.actions.shift());
-        this.dt = this.dt + idt;
-        if (this.dt > this.step) {
-            this.dt = this.dt - this.step;
-            this.drop();
-        }
+        this.refs.court.update(idt);
     }
 
     render() {
@@ -555,7 +594,7 @@ class Player extends React.Component {
                     </div>
                     <div style={endStyle}>{this.state.end}</div>
                 </div>
-                <canvas ref="court" className="court" />
+                <Court ref="court" />
                 <div className="hud">
                     <canvas ref="next" className="next" />
                 </div>

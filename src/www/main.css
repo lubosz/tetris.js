@@ -4,16 +4,6 @@ body {
     padding: auto;
 }
 
-.court {
-    display: inline-block;
-    background: #01093a;
-    border: 2px solid #333;
-    opacity: 0.8;
-    width: 45vh;
-    height: 90vh;
-    margin-top: 5vh;
-}
-
 .hud {
     display: inline-block;
     width: 20vh;
