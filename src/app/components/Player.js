@@ -54,6 +54,77 @@ class Next extends React.Component {
     }
 }
 
+class Hold extends React.Component {
+    constructor(props) {
+        super(props);
+        this.piece = null;
+        this.holdUsedThisTurn = false;
+    }
+    componentDidMount() {
+        this.canvas = this.refs.canvas.getDOMNode();
+        this.ctx = this.canvas.getContext('2d');
+    }
+    drop() {
+        this.holdUsedThisTurn = false;
+    }
+    draw() {
+        // TODO: center block in box
+        // half-arsed attempt at centering next piece display
+        // var padding = (nu - this.hold.type.size) / 2;
+        this.ctx.save();
+        this.ctx.scale(0.7, 0.7);
+        this.ctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
+        this.ctx.strokeStyle = 'white';
+        this.drawPiece(this.ctx, this.piece.type, 1, 1, this.piece.dir);
+        this.ctx.restore();
+    }
+    drawPiece(ctx, type, x, y, dir) {
+        var dx = this.dx;
+        var dy = this.dy;
+        eachblock(type, x, y, dir, function (x, y) {
+            drawBlock(ctx, x, y, dx, dy, type.color);
+        });
+    }
+    setHold(court, next) {
+        if (this.holdUsedThisTurn)
+            return;
+
+        let toHold = court.current;
+
+        if (this.piece == undefined)
+            court.setCurrentPiece(next.piece);
+        else
+            court.setCurrentPiece(this.piece);
+        this.piece = toHold;
+        next.randomPiece();
+        court.current.y = -2;
+        court.checkLose();
+        this.draw();
+        this.holdUsedThisTurn = true;
+    }
+    resize(dx, dy) {
+        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = this.canvas.clientHeight;
+        this.dx = dx;
+        this.dy = dy;
+        if (this.piece)
+            this.draw();
+    }
+    reset() {
+        this.piece = null;
+    }
+    render() {
+        let style = {
+            background: 'url(img/hold.png)',
+            backgroundSize: 'contain',
+            height: '15vh'
+        };
+        return (
+            <canvas ref="canvas" style={style} />
+        );
+    }
+}
+
 class Player extends React.Component {
     constructor(props) {
         super(props);
@@ -61,8 +132,6 @@ class Player extends React.Component {
         this.KEYs = {};
         this.wins = 0;
         this.score = 0;
-        this.hold = null;
-        this.holdUsedThisTurn = false;
 
         //gamepad timestamp variables
         this.lastCall = {};
@@ -81,16 +150,11 @@ class Player extends React.Component {
             end: ''
         };
     }
-
     componentDidMount() {
-        this.hcanvas = this.refs.hold.getDOMNode();
-        this.hctx = this.hcanvas.getContext('2d');
-
         this.refs.court.dropCb = this.dropCb.bind(this);
         this.refs.court.addOpponentLines = this.addOpponentLines.bind(this);
         this.refs.court.lose = this.lose.bind(this);
     }
-
     handle(action) {
         switch (action) {
             case DIR.LEFT:
@@ -112,46 +176,22 @@ class Player extends React.Component {
                 this.refs.court.rotate(DIR.TURNRIGHT);
                 break;
             case DIR.HOLD:
-                this.setHold();
+                this.refs.hold.setHold(this.refs.court, this.refs.next);
                 break;
         }
     }
-
     setOpponent(player) {
         this.opponent = player;
     }
-
     addOpponentLines(n) {
         this.opponent.refs.court.receiveLines(n);
     }
-
     dropCb() {
         this.refs.court.setCurrentPiece(this.refs.next.piece);
         this.refs.next.randomPiece();
         this.clearActions();
-        this.holdUsedThisTurn = false;
+        this.refs.hold.drop();
     }
-
-    drawHold() {
-        // TODO: center block in box
-        // half-arsed attempt at centering next piece display
-        // var padding = (nu - this.hold.type.size) / 2;
-        this.hctx.save();
-        this.hctx.scale(0.7, 0.7);
-        this.hctx.clearRect(0, 0, nu * this.refs.court.dx, nu * this.refs.court.dy);
-        this.hctx.strokeStyle = 'white';
-        this.drawPiece(this.hctx, this.hold.type, 1, 1, this.hold.dir);
-        this.hctx.restore();
-    }
-
-    drawPiece(ctx, type, x, y, dir) {
-        var dx = this.refs.court.dx;
-        var dy = this.refs.court.dy;
-        eachblock(type, x, y, dir, function (x, y) {
-            drawBlock(ctx, x, y, dx, dy, type.color);
-        });
-    }
-
     setLoseCallback(loseCb) {
         this.loseCb = loseCb;
     }
@@ -167,34 +207,10 @@ class Player extends React.Component {
     clearActions() {
         this.actions = [];
     }
-
-    setHold() {
-
-        if (this.holdUsedThisTurn)
-            return;
-
-        let toHold = this.refs.court.current;
-        if (this.hold == undefined)
-            this.refs.court.setCurrentPiece(this.refs.next.pice);
-        else
-            this.refs.court.setCurrentPiece(this.hold);
-        this.hold = toHold;
-        this.refs.next.randomPiece();
-        this.refs.court.current.y = -2;
-        this.refs.court.checkLose();
-        this.drawHold();
-        this.holdUsedThisTurn = true;
-    }
-
     resize() {
-        this.hcanvas.width = this.hcanvas.clientWidth;
-        this.hcanvas.height = this.hcanvas.clientHeight;
-
         this.refs.court.resize();
         this.refs.next.resize(this.refs.court.dx, this.refs.court.dy);
-
-        if (this.hold)
-            this.drawHold();
+        this.refs.hold.resize(this.refs.court.dx, this.refs.court.dy);
     }
 
     reset() {
@@ -202,6 +218,7 @@ class Player extends React.Component {
         this.refs.court.reset();
         this.refs.court.setCurrentPiece(randomPiece());
         this.refs.next.randomPiece();
+        this.refs.hold.reset();
         this.setState({
             score: 0,
             rows : 0,
@@ -253,7 +270,7 @@ class Player extends React.Component {
         return (
             <div style={playerStyle}>
                 <div className="hud">
-                    <canvas ref="hold" className="hold" />
+                    <Hold ref="hold" />
                     <div style={avatarStyle} />
                     <div>
                         <span style={nameStyle}>{this.props.name}</span><br/>

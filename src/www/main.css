@@ -30,12 +30,6 @@ a {
     text-decoration: none;
 }
 
-.hold {
-    background: url(img/hold.png);
-    background-size: contain;
-    height: 15vh;
-}
-
 #stats {
     display: block;
     position: absolute;
