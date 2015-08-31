@@ -102,19 +102,6 @@ class Player extends React.Component {
         super(props);
         this.actions = [];
         this.KEYs = {};
-        this.wins = 0;
-        this.score = 0;
-
-        //gamepad timestamp variables
-        this.lastCall = {};
-        this.lastCall.arrow_down = 0;
-        this.lastCall.arrow_left = 0;
-        this.lastCall.arrow_right = 0;
-        this.lastCall.arrow_up = 0;
-        this.lastCall.x = 0;
-        this.lastCall.o = 0;
-        this.lastCall.r1 = 0;
-
         this.state = {
             score: 0,
             rows: 0,
