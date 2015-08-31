@@ -312,8 +312,8 @@ class Court extends React.Component {
             this.draw();
     }
 
-    setCurrentPiece(piece) {
-        this.current = piece || randomPiece();
+    setCurrentPiece(piece = randomPiece()) {
+        this.current = piece;
         this.draw();
     }
 
@@ -333,7 +333,7 @@ class Court extends React.Component {
     reset() {
         this.dt = 0;
         this.clearBlocks();
-        this.setCurrentPiece(randomPiece());
+        this.setCurrentPiece();
     }
 
     update(idt) {
