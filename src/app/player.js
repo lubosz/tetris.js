@@ -1,4 +1,4 @@
-import {randomPiece, DIR, nx, ny, nu, mode} from './game'
+import {randomPiece, nx, ny, nu, mode, DIR} from './logic'
 import {get, html, sound} from './utils';
 import {drawBlock} from './renderer';
 import {setBlock, eachblock} from './logic';
