@@ -62,6 +62,7 @@ class Player extends React.Component {
         this.wins = 0;
         this.score = 0;
         this.hold = null;
+        this.holdUsedThisTurn = false;
 
         //gamepad timestamp variables
         this.lastCall = {};
@@ -128,6 +129,7 @@ class Player extends React.Component {
         this.refs.court.setCurrentPiece(this.refs.next.piece);
         this.refs.next.randomPiece();
         this.clearActions();
+        this.holdUsedThisTurn = false;
     }
 
     drawHold() {
@@ -167,6 +169,10 @@ class Player extends React.Component {
     }
 
     setHold() {
+
+        if (this.holdUsedThisTurn)
+            return;
+
         let toHold = this.refs.court.current;
         if (this.hold == undefined)
             this.refs.court.setCurrentPiece(this.refs.next.pice);
@@ -177,6 +183,7 @@ class Player extends React.Component {
         this.refs.court.current.y = -2;
         this.refs.court.checkLose();
         this.drawHold();
+        this.holdUsedThisTurn = true;
     }
 
     resize() {
