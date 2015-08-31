@@ -188,7 +188,6 @@ class Player extends React.Component {
     reset() {
         this.clearActions();
         this.refs.court.reset();
-        this.refs.court.setCurrentPiece(randomPiece());
         this.refs.next.randomPiece();
         this.refs.hold.reset();
         this.setState({

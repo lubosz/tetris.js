@@ -333,6 +333,7 @@ class Court extends React.Component {
     reset() {
         this.dt = 0;
         this.clearBlocks();
+        this.setCurrentPiece(randomPiece());
     }
 
     update(idt) {
