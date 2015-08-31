@@ -39,6 +39,8 @@ class Player extends React.Component {
             end: ''
         };
 
+        this.updateStep();
+
     }
 
     componentDidMount() {
@@ -397,14 +399,17 @@ class Player extends React.Component {
         this.setScore(this.state.score + n);
     }
 
+    updateStep () {
+        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.state.rows));
+    }
+
     setRows(n) {
         this.setState({rows : n});
-        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * n));
+        this.updateStep();
     }
 
     incrWins() {
         this.setState({wins : this.state.wins + 1});
-        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.state.wins));
     }
 
     addRows(n) {
