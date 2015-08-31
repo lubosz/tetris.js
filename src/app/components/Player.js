@@ -48,12 +48,6 @@ class Player extends React.Component {
         }; // how long before piece drops by 1 row (seconds)
 
         let playerStr = "P" + (this.props.number).toString();
-        this.canvas = get('canvas' + playerStr);
-        this.ucanvas = get('upcoming' + playerStr);
-        this.hcanvas = get('hold' + playerStr);
-        this.ctx = this.canvas.getContext('2d');
-        this.uctx = this.ucanvas.getContext('2d');
-        this.hctx = this.hcanvas.getContext('2d');
 
         this.ui = new UserInterface(
             'score' + playerStr,
@@ -70,6 +64,17 @@ class Player extends React.Component {
         this.lastCall.x = 0;
         this.lastCall.o = 0;
         this.lastCall.r1 = 0;
+
+    }
+
+    componentDidMount() {
+        this.canvas = this.refs.court.getDOMNode();
+        this.ucanvas = this.refs.next.getDOMNode();
+        this.hcanvas = this.refs.hold.getDOMNode();
+
+        this.ctx = this.canvas.getContext('2d');
+        this.uctx = this.ucanvas.getContext('2d');
+        this.hctx = this.hcanvas.getContext('2d');
     }
 
 //-----------------------------------------------------
@@ -488,6 +493,8 @@ class Player extends React.Component {
     }
 
     resize() {
+        if (!this.canvas)
+            return;
         this.canvas.width = this.canvas.clientWidth; // set canvas logical size equal to its physical size
         this.canvas.height = this.canvas.clientHeight; // (ditto)
         this.ucanvas.width = this.ucanvas.clientWidth;
@@ -527,13 +534,10 @@ class Player extends React.Component {
 
     render() {
         // TODO: use react, not DOM IDs
-        let hold = "holdP" + this.props.number;
         let score = "scoreP" + this.props.number;
         let rows = "rowsP" + this.props.number;
         let wins = "winsP" + this.props.number;
         let end = "endP" + this.props.number;
-        let canvas = "canvasP" + this.props.number;
-        let upcoming = "upcomingP" + this.props.number;
 
         let avatarStyle = {
             background: "url(img/avatars/" + this.props.background + ")",
@@ -560,7 +564,7 @@ class Player extends React.Component {
         return (
             <div style={playerStyle}>
                 <div className="hud">
-                    <canvas id={hold} />
+                    <canvas ref="hold" className="hold" />
                     <div style={avatarStyle} />
                     <div>
                         <span style={nameStyle}>{this.props.name}</span><br/>
@@ -572,9 +576,9 @@ class Player extends React.Component {
                     </div>
                     <div id={end} />
                 </div>
-                <canvas id={canvas} />
+                <canvas ref="court" className="court" />
                 <div className="hud">
-                    <canvas id={upcoming} />
+                    <canvas ref="next" className="next" />
                 </div>
             </div>
         );

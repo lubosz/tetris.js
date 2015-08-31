@@ -4,7 +4,7 @@ body {
     padding: auto;
 }
 
-#canvasP1, #canvasP2 {
+.court {
     display: inline-block;
     background: #01093a;
     border: 2px solid #333;
@@ -34,13 +34,13 @@ a {
     text-decoration: none;
 }
 
-#upcomingP1, #upcomingP2 {
+.next {
     background: url(img/next.png);
     background-size: contain;
     height: 15vh;
 }
 
-#holdP1, #holdP2 {
+.hold {
     background: url(img/hold.png);
     background-size: contain;
     height: 15vh;
