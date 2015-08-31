@@ -28,9 +28,20 @@ class Player extends React.Component {
         this.refs.court.dropCb = this.dropCb.bind(this);
         this.refs.court.addOpponentLines = this.addOpponentLines.bind(this);
         this.refs.court.lose = this.lose.bind(this);
+        this.refs.court.addRows = this.addRows.bind(this);
+        this.refs.court.addScore = this.addScore.bind(this);
         this.gamepadCallback = this.gamepadCallback.bind(this);
         this.keyboardCallback = this.keyboardCallback.bind(this);
     }
+
+    addRows(n) {
+        this.setState({rows : this.state.rows + n});
+        this.refs.court.updateStep(this.state.rows);
+    }
+    addScore(n) {
+        this.setState({score: this.state.score + n});
+    }
+
 
     bindGame(game) {
         this.end = game.end;

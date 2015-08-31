@@ -17,11 +17,7 @@ class Court extends React.Component {
             decrement: 0.005,
             min: 0.1
         }; // how long before piece drops by 1 row (seconds)
-        this.state = {
-            rows: 0,
-            score: 0
-        };
-        this.updateStep();
+        this.updateStep(0);
     }
 
     componentDidMount() {
@@ -29,24 +25,9 @@ class Court extends React.Component {
         this.ctx = this.canvas.getContext('2d');
     }
 
-    updateStep () {
-        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.state.rows));
+    updateStep (rows) {
+        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * rows));
     }
-
-    setRows(n) {
-        this.setState({rows : n});
-        this.updateStep();
-    }
-    addRows(n) {
-        this.setRows(this.state.rows + n);
-    }
-    setScore(n) {
-        this.setState({score: n});
-    }
-    addScore(n) {
-        this.setScore(this.state.score + n);
-    }
-
     checkLose() {
         if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
             this.lose();
