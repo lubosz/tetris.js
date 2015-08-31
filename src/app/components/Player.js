@@ -1,101 +1,10 @@
 import React from 'react';
 import Court from './Court'
-import {get, html, sound} from '../utils';
+import Next from './Next'
+import Hold from './Hold'
+import {sound} from '../utils';
 import {drawPiece} from '../renderer';
 import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
-
-
-class OneBlockCanvas extends React.Component {
-    constructor(props) {
-        super(props);
-        this.dy = 0;
-        this.dx = 0;
-        this.piece = null;
-    }
-    componentDidMount() {
-        this.canvas = this.refs.canvas.getDOMNode();
-        this.ctx = this.canvas.getContext('2d');
-    }
-    draw() {
-        // TODO: center block in box
-        // half-arsed attempt at centering next piece display
-        // var padding = ((nu - this.next.type.size) / 2 - 1);
-        this.ctx.save();
-        this.ctx.scale(0.7, 0.7);
-        this.ctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
-        this.ctx.strokeStyle = 'white';
-        drawPiece(this.ctx, this.piece.type, 1, 1, this.dx, this.dy, this.piece.dir);
-        this.ctx.restore();
-    }
-    resize(dx, dy) {
-        this.dx = dx;
-        this.dy = dy;
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
-        if (this.piece)
-            this.draw();
-    }
-}
-
-class Next extends OneBlockCanvas {
-    constructor(props) {
-        super(props);
-    }
-    randomPiece() {
-        this.piece = randomPiece();
-        this.draw();
-    }
-    render() {
-        let style = {
-            background: 'url(img/next.png)',
-            backgroundSize: 'contain',
-            height: '15vh'
-        };
-        return (
-            <canvas ref="canvas" style={style} />
-        );
-    }
-}
-
-class Hold extends OneBlockCanvas {
-    constructor(props) {
-        super(props);
-        this.holdUsedThisTurn = false;
-    }
-    drop() {
-        this.holdUsedThisTurn = false;
-    }
-    setHold(court, next) {
-        if (this.holdUsedThisTurn)
-            return;
-
-        let toHold = court.current;
-
-        if (this.piece == undefined)
-            court.setCurrentPiece(next.piece);
-        else
-            court.setCurrentPiece(this.piece);
-        this.piece = toHold;
-        next.randomPiece();
-        court.current.y = -2;
-        court.checkLose();
-        this.draw();
-        this.holdUsedThisTurn = true;
-    }
-    reset() {
-        this.piece = null;
-    }
-    render() {
-        let style = {
-            background: 'url(img/hold.png)',
-            backgroundSize: 'contain',
-            height: '15vh'
-        };
-        return (
-            <canvas ref="canvas" style={style} />
-        );
-    }
-}
 
 class Player extends React.Component {
     constructor(props) {
