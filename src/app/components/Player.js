@@ -397,14 +397,6 @@ class Player extends React.Component {
         this.setScore(this.state.score + n);
     }
 
-    clearScore() {
-        this.setState({score: 0});
-    }
-
-    clearRows() {
-        this.setState({rows : 0});
-    }
-
     setRows(n) {
         this.setState({rows : n});
         this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * n));
@@ -488,10 +480,14 @@ class Player extends React.Component {
         this.dt = 0;
         this.clearActions();
         this.clearBlocks();
-        this.clearRows();
-        this.clearScore();
         this.setCurrentPiece(this.next);
         this.setNextPiece();
+
+        this.setState({
+            score: 0,
+            rows : 0,
+            end: ''
+        });
     }
 
     update(idt) {
