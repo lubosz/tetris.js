@@ -4,38 +4,7 @@ import {timestamp, sound} from '../utils';
 import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from '../gamepad';
 import _ from 'lodash';
 import {DIR} from '../logic';
-
-class Messages extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            visibility: 'visible',
-            text: 'Press X to Play'
-        }
-    }
-    setText(text) {
-        this.setState({text: text});
-    }
-    hide() {
-        this.setState({visibility: 'hidden'});
-    }
-    show() {
-        this.setState({visibility: 'visible'});
-    }
-    render() {
-        let messageStyle = {
-            visibility: this.state.visibility,
-            position: 'absolute',
-            fontSize: '2vh'
-        };
-        return (
-            <div style={messageStyle}>
-                {this.state.text}
-            </div>
-        );
-    }
-}
-
+import Message from './Message'
 
 var GeneralKEYs = {
     ESC: 27,
@@ -253,17 +222,17 @@ class Main extends React.Component {
     play() {
         if (this.playing) return;
         this.playing = true;
-        this.refs.messages.hide();
+        this.refs.message.hide();
         this.reset();
     }
 
     togglePause() {
         this.paused = !this.paused;
         if (this.paused) {
-            this.refs.messages.setText("Paused");
-            this.refs.messages.show();
+            this.refs.message.setText("Paused");
+            this.refs.message.show();
         } else
-            this.refs.messages.hide();
+            this.refs.message.hide();
     }
 
     resize() {
@@ -301,7 +270,7 @@ class Main extends React.Component {
         return (
             <div id="outer">
                 <div id="inner">
-                    <Messages ref="messages" />
+                    <Message ref="message" />
                     <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
                     <div id="seperator" />
                     <Player number="2" name="Jessi" background="porenta.gif" color="purple" ref="player2" />
