@@ -24,7 +24,16 @@ class Message extends React.Component {
         let messageStyle = {
             visibility: this.state.visibility,
             position: 'absolute',
-            fontSize: '2vh'
+            fontSize: '2vh',
+            width: '100%',
+            top: '50vh',
+            paddingTop: '5vh',
+            paddingBottom: '5vh',
+            left: 0,
+            zIndex: 10,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            color: 'rgba(255,255,255,0.8)',
+            fontWeight: 'bold'
         };
         return (
             <div style={messageStyle}>
