@@ -5,17 +5,11 @@ import {get, html, sound} from '../utils';
 import {drawBlock} from '../renderer';
 
 class UserInterface {
-    constructor(scoreView, rowsView, winsView, endView) {
-        this.scoreView = scoreView;
+    constructor(rowsView, winsView, endView) {
         this.rowsView = rowsView;
         this.winsView = winsView;
         this.endView = endView;
     }
-
-    setScore(score) {
-        html(this.scoreView, ("00000" + Math.floor(score)).slice(-5));
-    }
-
     setRows(rows) {
         html(this.rowsView, rows);
     }
@@ -50,7 +44,6 @@ class Player extends React.Component {
         let playerStr = "P" + (this.props.number).toString();
 
         this.ui = new UserInterface(
-            'score' + playerStr,
             'rows' + playerStr,
             'wins' + playerStr,
             'end' + playerStr);
@@ -64,6 +57,10 @@ class Player extends React.Component {
         this.lastCall.x = 0;
         this.lastCall.o = 0;
         this.lastCall.r1 = 0;
+
+        this.state = {
+            score: 0
+        };
 
     }
 
@@ -416,16 +413,15 @@ class Player extends React.Component {
     }
 
     setScore(n) {
-        this.score = n;
-        this.ui.setScore(this.score);
+        this.setState({score: n});
     }
 
     addScore(n) {
-        this.setScore(this.score + n);
+        this.setScore(this.state.score + n);
     }
 
     clearScore() {
-        this.setScore(0);
+        this.setState({score: 0});
     }
 
     clearRows() {
@@ -534,7 +530,6 @@ class Player extends React.Component {
 
     render() {
         // TODO: use react, not DOM IDs
-        let score = "scoreP" + this.props.number;
         let rows = "rowsP" + this.props.number;
         let wins = "winsP" + this.props.number;
         let end = "endP" + this.props.number;
@@ -567,6 +562,8 @@ class Player extends React.Component {
             textAlign: "left"
         };
 
+        let scoreString = ("00000" + Math.floor(this.state.score)).slice(-5);
+
         return (
             <div style={playerStyle}>
                 <div className="hud">
@@ -575,7 +572,7 @@ class Player extends React.Component {
                     <div>
                         <span style={nameStyle}>{this.props.name}</span><br/>
                         <table style={tableStyle}>
-                            <tr><td>Score</td><td id={score} style={statStyle}>00000</td></tr>
+                            <tr><td>Score</td><td style={statStyle}>{scoreString}</td></tr>
                             <tr><td>Rows</td><td id={rows} style={statStyle}>0</td></tr>
                             <tr><td>Wins</td><td id={wins} style={statStyle}>0</td></tr>
                         </table>
