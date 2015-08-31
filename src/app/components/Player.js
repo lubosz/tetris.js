@@ -1,9 +1,58 @@
 import React from 'react';
 import Court from './Court'
-
 import {get, html, sound} from '../utils';
 import {drawBlock} from '../renderer';
-import {randomPiece, nu, eachblock, DIR} from '../logic';
+import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
+
+class Next extends React.Component {
+    constructor(props) {
+        super(props);
+        this.dy = 0;
+        this.dx = 0;
+    }
+    componentDidMount() {
+        this.canvas = this.refs.canvas.getDOMNode();
+        this.ctx = this.canvas.getContext('2d');
+    }
+    draw() {
+        // TODO: center block in box
+        // half-arsed attempt at centering next piece display
+        // var padding = ((nu - this.next.type.size) / 2 - 1);
+        this.ctx.save();
+        this.ctx.scale(0.7, 0.7);
+        this.ctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
+        this.ctx.strokeStyle = 'white';
+        this.drawPiece(this.ctx, this.piece.type, 1, 1, this.piece.dir);
+        this.ctx.restore();
+    }
+    drawPiece(ctx, type, x, y, dir) {
+        eachblock(type, x, y, dir, function (x, y) {
+            drawBlock(ctx, x, y, this.dx, this.dy, type.color);
+        }.bind(this));
+    }
+    randomPiece() {
+        this.piece = randomPiece();
+        this.draw();
+    }
+    resize(dx, dy) {
+        this.dx = dx;
+        this.dy = dy;
+        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = this.canvas.clientHeight;
+        if (this.piece)
+            this.draw();
+    }
+    render() {
+        let style = {
+            background: 'url(img/next.png)',
+            backgroundSize: 'contain',
+            height: '15vh'
+        };
+        return (
+            <canvas ref="canvas" style={style} />
+        );
+    }
+}
 
 class Player extends React.Component {
     constructor(props) {
@@ -33,10 +82,7 @@ class Player extends React.Component {
     }
 
     componentDidMount() {
-        this.ucanvas = this.refs.next.getDOMNode();
         this.hcanvas = this.refs.hold.getDOMNode();
-
-        this.uctx = this.ucanvas.getContext('2d');
         this.hctx = this.hcanvas.getContext('2d');
 
         this.refs.court.dropCb = this.dropCb.bind(this);
@@ -79,21 +125,9 @@ class Player extends React.Component {
     }
 
     dropCb() {
-        this.refs.court.setCurrentPiece(this.next);
-        this.setNextPiece(randomPiece());
+        this.refs.court.setCurrentPiece(this.refs.next.piece);
+        this.refs.next.randomPiece();
         this.clearActions();
-    }
-
-    drawNext() {
-        // TODO: center block in box
-        // half-arsed attempt at centering next piece display
-        // var padding = ((nu - this.next.type.size) / 2 - 1);
-        this.uctx.save();
-        this.uctx.scale(0.7, 0.7);
-        this.uctx.clearRect(0, 0, nu * this.refs.court.dx, nu * this.refs.court.dy);
-        this.uctx.strokeStyle = 'white';
-        this.drawPiece(this.uctx, this.next.type, 1, 1, this.next.dir);
-        this.uctx.restore();
     }
 
     drawHold() {
@@ -132,44 +166,35 @@ class Player extends React.Component {
         this.actions = [];
     }
 
-    setNextPiece(piece) {
-        this.next = piece || randomPiece();
-        this.drawNext();
-    }
-
     setHold() {
         let toHold = this.refs.court.current;
         if (this.hold == undefined)
-            this.refs.court.setCurrentPiece(this.next);
+            this.refs.court.setCurrentPiece(this.refs.next.pice);
         else
             this.refs.court.setCurrentPiece(this.hold);
         this.hold = toHold;
-        this.setNextPiece(randomPiece());
+        this.refs.next.randomPiece();
         this.refs.court.current.y = -2;
         this.refs.court.checkLose();
         this.drawHold();
     }
 
     resize() {
-        this.ucanvas.width = this.ucanvas.clientWidth;
-        this.ucanvas.height = this.ucanvas.clientHeight;
         this.hcanvas.width = this.hcanvas.clientWidth;
         this.hcanvas.height = this.hcanvas.clientHeight;
 
         this.refs.court.resize();
-        this.refs.court.draw();
+        this.refs.next.resize(this.refs.court.dx, this.refs.court.dy);
 
         if (this.hold)
             this.drawHold();
-        if (this.next)
-            this.drawNext();
     }
 
     reset() {
         this.clearActions();
         this.refs.court.reset();
-        this.refs.court.setCurrentPiece(this.next);
-        this.setNextPiece();
+        this.refs.court.setCurrentPiece(randomPiece());
+        this.refs.next.randomPiece();
         this.setState({
             score: 0,
             rows : 0,
@@ -235,7 +260,7 @@ class Player extends React.Component {
                 </div>
                 <Court ref="court" />
                 <div className="hud">
-                    <canvas ref="next" className="next" />
+                    <Next ref="next" />
                 </div>
             </div>
         );

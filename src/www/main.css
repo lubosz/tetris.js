@@ -30,12 +30,6 @@ a {
     text-decoration: none;
 }
 
-.next {
-    background: url(img/next.png);
-    background-size: contain;
-    height: 15vh;
-}
-
 .hold {
     background: url(img/hold.png);
     background-size: contain;
