@@ -4,11 +4,13 @@ import {get, html, sound} from '../utils';
 import {drawBlock} from '../renderer';
 import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
 
-class Next extends React.Component {
+
+class OneBlockCanvas extends React.Component {
     constructor(props) {
         super(props);
         this.dy = 0;
         this.dx = 0;
+        this.piece = null;
     }
     componentDidMount() {
         this.canvas = this.refs.canvas.getDOMNode();
@@ -30,10 +32,6 @@ class Next extends React.Component {
             drawBlock(ctx, x, y, this.dx, this.dy, type.color);
         }.bind(this));
     }
-    randomPiece() {
-        this.piece = randomPiece();
-        this.draw();
-    }
     resize(dx, dy) {
         this.dx = dx;
         this.dy = dy;
@@ -41,6 +39,16 @@ class Next extends React.Component {
         this.canvas.height = this.canvas.clientHeight;
         if (this.piece)
             this.draw();
+    }
+}
+
+class Next extends OneBlockCanvas {
+    constructor(props) {
+        super(props);
+    }
+    randomPiece() {
+        this.piece = randomPiece();
+        this.draw();
     }
     render() {
         let style = {
@@ -54,36 +62,13 @@ class Next extends React.Component {
     }
 }
 
-class Hold extends React.Component {
+class Hold extends OneBlockCanvas {
     constructor(props) {
         super(props);
-        this.piece = null;
         this.holdUsedThisTurn = false;
-    }
-    componentDidMount() {
-        this.canvas = this.refs.canvas.getDOMNode();
-        this.ctx = this.canvas.getContext('2d');
     }
     drop() {
         this.holdUsedThisTurn = false;
-    }
-    draw() {
-        // TODO: center block in box
-        // half-arsed attempt at centering next piece display
-        // var padding = (nu - this.hold.type.size) / 2;
-        this.ctx.save();
-        this.ctx.scale(0.7, 0.7);
-        this.ctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
-        this.ctx.strokeStyle = 'white';
-        this.drawPiece(this.ctx, this.piece.type, 1, 1, this.piece.dir);
-        this.ctx.restore();
-    }
-    drawPiece(ctx, type, x, y, dir) {
-        var dx = this.dx;
-        var dy = this.dy;
-        eachblock(type, x, y, dir, function (x, y) {
-            drawBlock(ctx, x, y, dx, dy, type.color);
-        });
     }
     setHold(court, next) {
         if (this.holdUsedThisTurn)
@@ -101,14 +86,6 @@ class Hold extends React.Component {
         court.checkLose();
         this.draw();
         this.holdUsedThisTurn = true;
-    }
-    resize(dx, dy) {
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
-        this.dx = dx;
-        this.dy = dy;
-        if (this.piece)
-            this.draw();
     }
     reset() {
         this.piece = null;
