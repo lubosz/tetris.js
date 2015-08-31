@@ -117,10 +117,8 @@ class Player extends React.Component {
     handle(action) {
         switch (action) {
             case DIR.LEFT:
-                this.refs.court.move(DIR.LEFT);
-                break;
             case DIR.RIGHT:
-                this.refs.court.move(DIR.RIGHT);
+                this.refs.court.move(action);
                 break;
             case DIR.UP:
                 this.refs.court.instantDrop();
@@ -129,10 +127,8 @@ class Player extends React.Component {
                 this.refs.court.drop();
                 break;
             case DIR.TURNLEFT:
-                this.refs.court.rotate(DIR.TURNLEFT);
-                break;
             case DIR.TURNRIGHT:
-                this.refs.court.rotate(DIR.TURNRIGHT);
+                this.refs.court.rotate(action);
                 break;
             case DIR.HOLD:
                 this.refs.hold.setHold(this.refs.court, this.refs.next);
