@@ -58,7 +58,7 @@ class Main extends React.Component {
     }
 
     gamePadCallback(pad, idx, type) {
-        console.log(pad, idx, type);
+        //console.log(pad, idx, type);
         var i = pad.index;
         if (type == "pressed") {
             switch (idx) {
