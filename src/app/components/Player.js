@@ -1,7 +1,8 @@
-import {randomPiece, nx, ny, nu, mode, DIR} from './logic'
-import {get, html, sound} from './utils';
-import {drawBlock} from './renderer';
-import {setBlock, eachblock} from './logic';
+import React from 'react';
+
+import {randomPiece, nx, ny, nu, mode, DIR, setBlock, eachblock} from '../logic'
+import {get, html, sound} from '../utils';
+import {drawBlock} from '../renderer';
 
 class UserInterface {
     constructor(scoreView, rowsView, winsView, endView) {
@@ -28,12 +29,9 @@ class UserInterface {
     }
 }
 
-//-------------------------------------------------
-// This is the Player class containing all Player's
-// Information
-//-------------------------------------------------
-class PlayerNonReact {
-    constructor(playerNum) {
+class Player extends React.Component {
+    constructor(props) {
+        super(props);
         this.dx = 0;
         this.dy = 0;
         this.actions = [];
@@ -41,7 +39,6 @@ class PlayerNonReact {
         this.wins = 0;
         this.score = 0;
         this.hold = null;
-        this.playerNum = playerNum;
         this.holdUsed = false;
         this.speed =
         {
@@ -50,7 +47,7 @@ class PlayerNonReact {
             min: 0.1
         }; // how long before piece drops by 1 row (seconds)
 
-        let playerStr = "P" + (playerNum + 1).toString();
+        let playerStr = "P" + (this.props.number).toString();
         this.canvas = get('canvas' + playerStr);
         this.ucanvas = get('upcoming' + playerStr);
         this.hcanvas = get('hold' + playerStr);
@@ -528,5 +525,60 @@ class PlayerNonReact {
         }
     }
 
+    render() {
+        // TODO: use react, not DOM IDs
+        let hold = "holdP" + this.props.number;
+        let score = "scoreP" + this.props.number;
+        let rows = "rowsP" + this.props.number;
+        let wins = "winsP" + this.props.number;
+        let end = "endP" + this.props.number;
+        let canvas = "canvasP" + this.props.number;
+        let upcoming = "upcomingP" + this.props.number;
+
+        let avatarStyle = {
+            background: "url(img/avatars/" + this.props.background + ")",
+            backgroundSize: "contain",
+            height: "15vh",
+        };
+
+        let nameStyle = {
+            fontWeight: "bold",
+            color: this.props.color
+        };
+
+        let playerStyle = {
+            display: "inline-block",
+            padding: 0,
+            fontSize: "1.0vw"
+        }
+
+        let tableStyle = {
+            display: "inline-block",
+            textAlign: "right"
+        }
+
+        return (
+            <div style={playerStyle}>
+                <div className="hud">
+                    <canvas id={hold} />
+                    <div style={avatarStyle} />
+                    <div>
+                        <span style={nameStyle}>{this.props.name}</span><br/>
+                        <table style={tableStyle}>
+                            <tr><td>Score</td><td id={score}>00000</td></tr>
+                            <tr><td>Rows</td><td id={rows}>0</td></tr>
+                            <tr><td>Wins</td><td id={wins}>0</td></tr>
+                        </table>
+                    </div>
+                    <div id={end} />
+                </div>
+                <canvas id={canvas} />
+                <div className="hud">
+                    <canvas id={upcoming} />
+                </div>
+            </div>
+        );
+    }
 }
-export {PlayerNonReact,UserInterface};
+
+export default Player;

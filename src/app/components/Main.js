@@ -1,70 +1,10 @@
 import React from 'react';
-import {PlayerNonReact, UserInterface} from '../player';
+import Player from './Player';
 import {get, timestamp, show, hide, sound} from '../utils';
 import {gamepadHandler, queryGamePads, clearDelayed, delayedPressed} from '../gamepad';
 import _ from 'lodash';
 import {DIR} from '../logic'
 
-
-class Player extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        // TODO: use react, not DOM IDs
-        let hold = "holdP" + this.props.number;
-        let score = "scoreP" + this.props.number;
-        let rows = "rowsP" + this.props.number;
-        let wins = "winsP" + this.props.number;
-        let end = "endP" + this.props.number;
-        let canvas = "canvasP" + this.props.number;
-        let upcoming = "upcomingP" + this.props.number;
-
-        let avatarStyle = {
-            background: "url(img/avatars/" + this.props.background + ")",
-            backgroundSize: "contain",
-            height: "15vh",
-        };
-
-        let nameStyle = {
-            fontWeight: "bold",
-            color: this.props.color
-        };
-
-        let playerStyle = {
-            display: "inline-block",
-            padding: 0,
-            fontSize: "1.0vw"
-        }
-
-        let tableStyle = {
-            display: "inline-block",
-            textAlign: "right"
-        }
-
-        return (
-            <div style={playerStyle}>
-                <div className="hud">
-                    <canvas id={hold} />
-                    <div style={avatarStyle} />
-                    <div>
-                        <span style={nameStyle}>{this.props.name}</span><br/>
-                        <table style={tableStyle}>
-                            <tr><td>Score</td><td id={score}>00000</td></tr>
-                            <tr><td>Rows</td><td id={rows}>0</td></tr>
-                            <tr><td>Wins</td><td id={wins}>0</td></tr>
-                        </table>
-                    </div>
-                    <div id={end} />
-                </div>
-                <canvas id={canvas} />
-                <div className="hud">
-                    <canvas id={upcoming} />
-                </div>
-            </div>
-        );
-    }
-}
 
 class Messages extends React.Component {
     constructor(props) {
@@ -235,9 +175,8 @@ class Main extends React.Component {
     }
 
     initPlayers() {
-        var Player1 = new PlayerNonReact(0);
         //player 1 KEYs: left_arrow, up_arrow, right_arrow, down_arrow, o, p, i
-        Player1.KEYs =
+        this.refs.player1.KEYs =
         {
             LEFT: 37,
             UP: 38,
@@ -248,9 +187,8 @@ class Main extends React.Component {
             HOLD: 73
         };
 
-        var Player2 = new PlayerNonReact(1);
         //player 2 KEYs: w, a, s, d, q, e, r
-        Player2.KEYs =
+        this.refs.player2.KEYs =
         {
             LEFT: 65,
             UP: 87,
@@ -261,13 +199,13 @@ class Main extends React.Component {
             HOLD: 82
         };
 
-        Player1.setOpponent(Player2);
-        Player2.setOpponent(Player1);
-        Player1.setLoseCallback(this.loseCb);
-        Player2.setLoseCallback(this.loseCb);
+        this.refs.player1.setOpponent(this.refs.player2);
+        this.refs.player2.setOpponent(this.refs.player1);
+        this.refs.player1.setLoseCallback(this.loseCb);
+        this.refs.player2.setLoseCallback(this.loseCb);
 
-        this.players.push(Player1);
-        this.players.push(Player2);
+        this.players.push(this.refs.player1);
+        this.players.push(this.refs.player2);
     }
 
 
@@ -352,8 +290,8 @@ class Main extends React.Component {
             <div id="outer">
                 <div id="inner">
                     <Messages />
-                    <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" />
-                    <Player number="2" name="Jessi" background="porenta.gif" color="purple" />
+                    <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
+                    <Player number="2" name="Jessi" background="porenta.gif" color="purple" ref="player2" />
                 </div>
             </div>
         );
