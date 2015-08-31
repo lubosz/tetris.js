@@ -561,6 +561,12 @@ class Player extends React.Component {
             textAlign: "right"
         }
 
+        let statStyle = {
+            color: "white",
+            fontWeight: "bold",
+            textAlign: "left"
+        };
+
         return (
             <div style={playerStyle}>
                 <div className="hud">
@@ -569,9 +575,9 @@ class Player extends React.Component {
                     <div>
                         <span style={nameStyle}>{this.props.name}</span><br/>
                         <table style={tableStyle}>
-                            <tr><td>Score</td><td id={score}>00000</td></tr>
-                            <tr><td>Rows</td><td id={rows}>0</td></tr>
-                            <tr><td>Wins</td><td id={wins}>0</td></tr>
+                            <tr><td>Score</td><td id={score} style={statStyle}>00000</td></tr>
+                            <tr><td>Rows</td><td id={rows} style={statStyle}>0</td></tr>
+                            <tr><td>Wins</td><td id={wins} style={statStyle}>0</td></tr>
                         </table>
                     </div>
                     <div id={end} />

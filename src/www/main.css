@@ -46,12 +46,6 @@ a {
     height: 15vh;
 }
 
-#scoreP1, #scoreP2, #winsP1, #winsP2, #rowsP1, #rowsP2 {
-    color: white;
-    font-weight: bold;
-    text-align: left;
-}
-
 #endP1, #endP2 {
     display: block;
     color: red;
