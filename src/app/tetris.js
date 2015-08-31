@@ -15,42 +15,49 @@
 //-------------------------------------------------------------------------
 var i =
 {
+    name: 'I',
     size: 4,
     blocks: [0x0F00, 0x2222, 0x00F0, 0x4444],
     color: '#20c8f8' // cyan
 };
 var j =
 {
+    name: 'J',
     size: 3,
     blocks: [0x44C0, 0x8E00, 0x6440, 0x0E20],
     color: '#6060f8' // blue
 };
 var l =
 {
+    name: 'L',
     size: 3,
     blocks: [0x4460, 0x0E80, 0xC440, 0x2E00],
     color: '#f87820' // orange
 };
 var o =
 {
+    name: 'O',
     size: 2,
     blocks: [0xCC00, 0xCC00, 0xCC00, 0xCC00],
     color: '#f8d000' // yellow
 };
 var s =
 {
+    name: 'S',
     size: 3,
     blocks: [0x06C0, 0x8C40, 0x6C00, 0x4620],
     color: '#00d000' // green
 };
 var t =
 {
+    name: 'T',
     size: 3,
     blocks: [0x0E40, 0x4C40, 0x4E00, 0x4640],
     color: '#d828d8' // purple / pink
 };
 var z =
 {
+    name: 'Z',
     size: 3,
     blocks: [0x0C60, 0x4C80, 0xC600, 0x2640],
     color: '#f01818' // red
