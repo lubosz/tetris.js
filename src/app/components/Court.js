@@ -4,7 +4,7 @@
 
 import React from 'react';
 import {randomPiece, nx, ny, nu, mode, DIR, setBlock, eachblock} from '../logic';
-import {drawBlock} from '../renderer';
+import {drawBlock, drawPiece} from '../renderer';
 
 class Court extends React.Component {
     constructor(props) {
@@ -277,13 +277,12 @@ class Court extends React.Component {
     }
 
     draw() {
-
         if (!this.current)
             return;
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.strokeStyle = 'white';
-        this.drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.current.dir);
+        drawPiece(this.ctx, this.current.type, this.current.x, this.current.y, this.dx, this.dy, this.current.dir);
 
         //ghost
         this.ctx.globalAlpha = 0.4;
@@ -293,7 +292,7 @@ class Court extends React.Component {
             y++;
         }
 
-        this.drawPiece(this.ctx, this.current.type, this.current.x, y, this.current.dir);
+        drawPiece(this.ctx, this.current.type, this.current.x, y, this.dx, this.dy, this.current.dir);
         this.ctx.globalAlpha = 1.0;
 
         let x, block;
@@ -305,14 +304,6 @@ class Court extends React.Component {
             }
         }
         this.ctx.strokeRect(0, 0, nx * this.dx - 1, ny * this.dy - 1); // court boundary
-    }
-
-    drawPiece(ctx, type, x, y, dir) {
-        var dx = this.dx;
-        var dy = this.dy;
-        eachblock(type, x, y, dir, function (x, y) {
-            drawBlock(ctx, x, y, dx, dy, type.color);
-        });
     }
 
     clearBlocks() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Court from './Court'
 import {get, html, sound} from '../utils';
-import {drawBlock} from '../renderer';
+import {drawPiece} from '../renderer';
 import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
 
 
@@ -24,13 +24,8 @@ class OneBlockCanvas extends React.Component {
         this.ctx.scale(0.7, 0.7);
         this.ctx.clearRect(0, 0, nu * this.dx, nu * this.dy);
         this.ctx.strokeStyle = 'white';
-        this.drawPiece(this.ctx, this.piece.type, 1, 1, this.piece.dir);
+        drawPiece(this.ctx, this.piece.type, 1, 1, this.dx, this.dy, this.piece.dir);
         this.ctx.restore();
-    }
-    drawPiece(ctx, type, x, y, dir) {
-        eachblock(type, x, y, dir, function (x, y) {
-            drawBlock(ctx, x, y, this.dx, this.dy, type.color);
-        }.bind(this));
     }
     resize(dx, dy) {
         this.dx = dx;
