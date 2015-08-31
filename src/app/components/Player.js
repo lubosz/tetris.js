@@ -5,7 +5,7 @@ import Hold from './Hold'
 import {sound} from '../utils';
 import {drawPiece} from '../renderer';
 import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
-import {gamepadHandler, clearDelayed, delayedPressed} from '../gamepad';
+import {clearDelayed, delayedPressed} from '../gamepad';
 
 let GeneralKEYs = {
     ESC: 27,
@@ -178,11 +178,8 @@ class Player extends React.Component {
         this.clearActions();
         this.refs.hold.drop();
     }
-    setLoseCallback(loseCb) {
-        this.loseCb = loseCb;
-    }
     lose() {
-        this.loseCb(this);
+        this.end(this);
     }
     setEnd(win) {
         this.setState({end : win});

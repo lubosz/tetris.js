@@ -1,7 +1,7 @@
 import React from 'react';
 import Player from './Player';
 import {timestamp, sound} from '../utils';
-import {queryGamePads} from '../gamepad';
+import {queryGamePads, gamepadHandler} from '../gamepad';
 import _ from 'lodash';
 import {DIR} from '../logic';
 import Message from './Message'
@@ -13,21 +13,47 @@ class Main extends React.Component {
         this.players = [];
         this.paused = false;
         this.last = timestamp();
-        this.loseCb = this.loseCb.bind(this);
+        this.end = this.end.bind(this);
     }
 
     componentDidMount() {
-        this.run();
+        this.initPlayers();
+        this.addEvents();
+        this.players.forEach(p => {
+            p.resize();
+            p.reset();
+        });
+
+        let self = this;
+
+        function frame () {
+            self.players.forEach(p => {
+                queryGamePads(p.gamepadCallback);
+            });
+
+            // using requestAnimationFrame have to be able to handle large delta's caused
+            // when it 'hibernates' in a background or non-visible tab
+            if (!self.paused) {
+                let now = timestamp();
+                let idt = Math.min(1, (now - self.last) / 1000.0);
+                if (self.playing)
+                    self.players.forEach(p => {p.update(idt)});
+                self.last = now;
+            }
+            requestAnimationFrame(frame);
+        }
+        // start the first frame
+        frame();
     }
 
-    loseCb(player) {
+    end(player) {
         player.setEnd('LOSE');
-        for (var i = 0; i < this.players.length; i++) {
-            if (this.players[i] != player) {
-                this.players[i].setEnd('WIN');
-                this.players[i].incrWins();
+        this.players.forEach(p => {
+            if (p != player) {
+                p.setEnd('WIN');
+                p.incrWins();
             }
-        }
+        });
         this.playing = false;
     }
 
@@ -58,51 +84,19 @@ class Main extends React.Component {
 
         this.refs.player1.setOpponent(this.refs.player2);
         this.refs.player2.setOpponent(this.refs.player1);
-        this.refs.player1.setLoseCallback(this.loseCb);
-        this.refs.player2.setLoseCallback(this.loseCb);
+        this.refs.player1.end = this.end;
+        this.refs.player2.end = this.end;
 
         this.refs.player1.play = this.play.bind(this);
         this.refs.player2.play = this.play.bind(this);
+
+        this.refs.player1.togglePause = this.togglePause.bind(this);
+        this.refs.player2.togglePause = this.togglePause.bind(this);
 
         addEventListener('keydown', this.refs.player1.keyboardCallback);
 
         this.players.push(this.refs.player1);
         this.players.push(this.refs.player2);
-    }
-
-
-
-    //-------------------------------------------------------------------------
-    // GAME LOOP
-    //-------------------------------------------------------------------------
-
-    run() {
-        this.initPlayers();
-        this.addEvents();
-        this.players.forEach(p => {
-            p.resize();
-            p.reset();
-        });
-
-        let self = this;
-
-        function frame () {
-            self.players.forEach(p => {
-                queryGamePads(p.gamepadCallback);
-            });
-
-            // using requestAnimationFrame have to be able to handle large delta's caused
-            // when it 'hibernates' in a background or non-visible tab
-            if (!self.paused) {
-                let now = timestamp();
-                self.update(Math.min(1, (now - self.last) / 1000.0));
-                self.last = now;
-            }
-            requestAnimationFrame(frame);
-        }
-
-        // start the first frame
-        frame();
     }
 
     play() {
@@ -142,13 +136,6 @@ class Main extends React.Component {
         addEventListener("gamepaddisconnected", function (e) {
             gamepadHandler(e, false);
         });
-    }
-
-    update(idt) {
-        if (this.playing)
-            this.players.forEach(p => {
-                p.update(idt)
-            });
     }
 
     render() {
