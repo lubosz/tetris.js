@@ -21,6 +21,12 @@ body {
     margin-top: 5vh;
     vertical-align: top;
     opacity: 0.8;
+    background-color: rgba(0,0,0,0.5);
+}
+
+#seperator {
+    display: inline-block;
+    width: 5vh;
 }
 
 .hud div, .hud canvas {

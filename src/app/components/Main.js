@@ -303,6 +303,7 @@ class Main extends React.Component {
                 <div id="inner">
                     <Messages ref="messages" />
                     <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
+                    <div id="seperator" />
                     <Player number="2" name="Jessi" background="porenta.gif" color="purple" ref="player2" />
                 </div>
             </div>
