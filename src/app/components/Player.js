@@ -4,25 +4,6 @@ import {randomPiece, nx, ny, nu, mode, DIR, setBlock, eachblock} from '../logic'
 import {get, html, sound} from '../utils';
 import {drawBlock} from '../renderer';
 
-class UserInterface {
-    constructor(rowsView, winsView, endView) {
-        this.rowsView = rowsView;
-        this.winsView = winsView;
-        this.endView = endView;
-    }
-    setRows(rows) {
-        html(this.rowsView, rows);
-    }
-
-    setWins(wins) {
-        html(this.winsView, wins);
-    }
-
-    setEnd(end) {
-        html(this.endView, end);
-    }
-}
-
 class Player extends React.Component {
     constructor(props) {
         super(props);
@@ -41,13 +22,6 @@ class Player extends React.Component {
             min: 0.1
         }; // how long before piece drops by 1 row (seconds)
 
-        let playerStr = "P" + (this.props.number).toString();
-
-        this.ui = new UserInterface(
-            'rows' + playerStr,
-            'wins' + playerStr,
-            'end' + playerStr);
-
         //gamepad timestamp variables
         this.lastCall = {};
         this.lastCall.arrow_down = 0;
@@ -59,7 +33,10 @@ class Player extends React.Component {
         this.lastCall.r1 = 0;
 
         this.state = {
-            score: 0
+            score: 0,
+            rows: 0,
+            wins: 0,
+            end: ''
         };
 
     }
@@ -409,7 +386,7 @@ class Player extends React.Component {
     }
 
     setEnd(win) {
-        this.ui.setEnd(win);
+        this.setState({end : win});
     }
 
     setScore(n) {
@@ -425,23 +402,21 @@ class Player extends React.Component {
     }
 
     clearRows() {
-        this.setRows(0);
+        this.setState({rows : 0});
     }
 
     setRows(n) {
-        this.rows = n;
-        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.rows));
-        this.ui.setRows(this.rows);
+        this.setState({rows : n});
+        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * n));
     }
 
     incrWins() {
-        this.wins++;
-        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.wins));
-        this.ui.setWins(this.wins);
+        this.setState({wins : this.state.wins + 1});
+        this.step = Math.max(this.speed.min, this.speed.start - (this.speed.decrement * this.state.wins));
     }
 
     addRows(n) {
-        this.setRows(this.rows + n);
+        this.setRows(this.state.rows + n);
     }
 
     clearBlocks() {
@@ -529,11 +504,6 @@ class Player extends React.Component {
     }
 
     render() {
-        // TODO: use react, not DOM IDs
-        let rows = "rowsP" + this.props.number;
-        let wins = "winsP" + this.props.number;
-        let end = "endP" + this.props.number;
-
         let avatarStyle = {
             background: "url(img/avatars/" + this.props.background + ")",
             backgroundSize: "contain",
@@ -562,6 +532,11 @@ class Player extends React.Component {
             textAlign: "left"
         };
 
+        let endStyle = {
+            color: 'red',
+            fontWeight: 'bold'
+        };
+
         let scoreString = ("00000" + Math.floor(this.state.score)).slice(-5);
 
         return (
@@ -573,11 +548,11 @@ class Player extends React.Component {
                         <span style={nameStyle}>{this.props.name}</span><br/>
                         <table style={tableStyle}>
                             <tr><td>Score</td><td style={statStyle}>{scoreString}</td></tr>
-                            <tr><td>Rows</td><td id={rows} style={statStyle}>0</td></tr>
-                            <tr><td>Wins</td><td id={wins} style={statStyle}>0</td></tr>
+                            <tr><td>Rows</td><td style={statStyle}>{this.state.rows}</td></tr>
+                            <tr><td>Wins</td><td style={statStyle}>{this.state.wins}</td></tr>
                         </table>
                     </div>
-                    <div id={end} />
+                    <div style={endStyle}>{this.state.end}</div>
                 </div>
                 <canvas ref="court" className="court" />
                 <div className="hud">
