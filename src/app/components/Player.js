@@ -31,6 +31,13 @@ class Player extends React.Component {
         this.gamepadCallback = this.gamepadCallback.bind(this);
         this.keyboardCallback = this.keyboardCallback.bind(this);
     }
+
+    bindGame(game) {
+        this.end = game.end;
+        this.play = game.play;
+        this.togglePause = game.togglePause;
+    }
+
     handle(action) {
         switch (action) {
             case DIR.LEFT:

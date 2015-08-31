@@ -14,6 +14,8 @@ class Main extends React.Component {
         this.paused = false;
         this.last = timestamp();
         this.end = this.end.bind(this);
+        this.play = this.play.bind(this);
+        this.togglePause = this.togglePause.bind(this);
     }
 
     componentDidMount() {
@@ -84,14 +86,9 @@ class Main extends React.Component {
 
         this.refs.player1.setOpponent(this.refs.player2);
         this.refs.player2.setOpponent(this.refs.player1);
-        this.refs.player1.end = this.end;
-        this.refs.player2.end = this.end;
 
-        this.refs.player1.play = this.play.bind(this);
-        this.refs.player2.play = this.play.bind(this);
-
-        this.refs.player1.togglePause = this.togglePause.bind(this);
-        this.refs.player2.togglePause = this.togglePause.bind(this);
+        this.refs.player1.bindGame(this);
+        this.refs.player2.bindGame(this);
 
         addEventListener('keydown', this.refs.player1.keyboardCallback);
 
