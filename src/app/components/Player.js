@@ -5,6 +5,12 @@ import Hold from './Hold'
 import {sound} from '../utils';
 import {drawPiece} from '../renderer';
 import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
+import {gamepadHandler, clearDelayed, delayedPressed} from '../gamepad';
+
+let GeneralKEYs = {
+    ESC: 27,
+    SPACE: 32
+};
 
 class Player extends React.Component {
     constructor(props) {
@@ -22,6 +28,8 @@ class Player extends React.Component {
         this.refs.court.dropCb = this.dropCb.bind(this);
         this.refs.court.addOpponentLines = this.addOpponentLines.bind(this);
         this.refs.court.lose = this.lose.bind(this);
+        this.gamepadCallback = this.gamepadCallback.bind(this);
+        this.keyboardCallback = this.keyboardCallback.bind(this);
     }
     handle(action) {
         switch (action) {
@@ -44,6 +52,120 @@ class Player extends React.Component {
                 break;
         }
     }
+
+    gamepadCallback(pad, idx, type) {
+        //console.log(pad, idx, type);
+        if (type == "pressed") {
+            switch (idx) {
+                case 13:
+                    //arrow down
+                    delayedPressed(idx, function () {
+                        this.actions.push(DIR.DOWN);
+                        sound("move");
+                    }.bind(this));
+                    break;
+                case 14:
+                    //arrow left
+                    delayedPressed(idx, function () {
+                        this.actions.push(DIR.LEFT);
+                        sound("move");
+                    }.bind(this));
+                    break;
+                case 15:
+                    //arrow right
+                    delayedPressed(idx, function () {
+                        this.actions.push(DIR.RIGHT);
+                        sound("move");
+                    }.bind(this));
+                    break;
+                case 12:
+                    //arrow up
+                    this.actions.push(DIR.UP);
+                    sound("drop");
+                    break;
+                case 0:
+                    //x
+                    this.play();
+                    this.actions.push(DIR.TURNLEFT);
+                    sound("rotate");
+                    break;
+                case 1:
+                    //'o'
+                    this.actions.push(DIR.TURNRIGHT);
+                    sound("rotate");
+                    break;
+                case 5:
+                    //'r1'
+                    this.actions.push(DIR.HOLD);
+                    break;
+                case 9:
+                    //'options
+                    this.togglePause();
+                    break;
+                case 6:
+                //l2
+                case 7:
+                //r2
+                case 2:
+                //square
+                case 3:
+                //'triangle'
+                case 4:
+                    //l1
+                    break;
+            }
+        } else if (type == "released") {
+            clearDelayed(idx);
+        }
+    }
+
+    keyboardCallback(ev) {
+        //console.log("getting key event", ev.keyCode, ev);
+        var handled = false;
+        switch (ev.keyCode) {
+            case this.KEYs.LEFT:
+                this.actions.push(DIR.LEFT);
+                handled = true;
+                break;
+            case this.KEYs.RIGHT:
+                this.actions.push(DIR.RIGHT);
+                handled = true;
+                break;
+            case this.KEYs.UP:
+                this.actions.push(DIR.UP);
+                handled = true;
+                break;
+            case this.KEYs.DOWN:
+                this.actions.push(DIR.DOWN);
+                handled = true;
+                break;
+            case this.KEYs.TURNLEFT:
+                this.actions.push(DIR.TURNLEFT);
+                handled = true;
+                break;
+            case this.KEYs.TURNRIGHT:
+                this.actions.push(DIR.TURNRIGHT);
+                handled = true;
+                break;
+            case this.KEYs.HOLD:
+                this.actions.push(DIR.HOLD);
+                handled = true;
+                break;
+            case GeneralKEYs.ESC:
+                this.lose();
+                handled = true;
+                break;
+            case GeneralKEYs.SPACE:
+                this.play();
+                handled = true;
+                break;
+        }
+        // prevent arrow keys from scrolling the page (supported in IE9+ and all other browsers)
+        if (handled)
+            ev.preventDefault();
+
+    }
+
     setOpponent(player) {
         this.opponent = player;
     }
