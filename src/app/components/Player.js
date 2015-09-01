@@ -2,10 +2,10 @@ import React from 'react';
 import Court from './Court'
 import Next from './Next'
 import Hold from './Hold'
-import {sound} from '../utils';
 import {drawPiece} from '../renderer';
 import {randomPiece, nu, nx, ny, eachblock, DIR} from '../logic';
 import {clearDelayed, delayedPressed} from '../gamepad';
+import {sound, music} from '../utils';
 
 let GeneralKEYs = {
     ESC: 27,
@@ -32,6 +32,7 @@ class Player extends React.Component {
         this.refs.court.addScore = this.addScore.bind(this);
         this.gamepadCallback = this.gamepadCallback.bind(this);
         this.keyboardCallback = this.keyboardCallback.bind(this);
+        music("korobeiniki-chiptune");
     }
 
     addRows(n) {
