@@ -8,7 +8,7 @@ var interval_ids = {};
 var timeout_ids = {};
 
 const repeat_interval = 80; //ms
-const repeat_timeout = 300; //ms
+const repeat_timeout = 150; //ms
 
 function haveGamePads() {
     return "getGamepads" in navigator;
