@@ -102,28 +102,47 @@ class Court extends React.Component {
         }
     }
 
+    // offset the piece at the borders for rotation
+    horizontalFitOffset(type, x, y, dir) {
+        let offset = 0;
+        let step = 0;
+        let wouldFit = true;
+
+        // try to offset at screen border
+        if (this.current.x <= 0)
+            step = 1;
+        else if (this.current.x >= 7)
+            step = -1;
+
+        while (this.occupied(type, x + offset, y, dir)) {
+            //console.log(type.name, "would not fit", x+offset, y);
+            offset += step;
+            // max offset is 2, required for I, break if not at border
+            if (Math.abs(offset) > 2 || step == 0) {
+                wouldFit = false;
+                break;
+            }
+        }
+        //console.log(type.name, "seems that would fit", wouldFit, x+offset, y);
+        return [wouldFit, offset];
+    }
+
     rotate(dir) {
-        let newdir;
-        if (DIR.TURNRIGHT == dir) {
-            newdir = (this.current.dir == DIR.MAX ? DIR.MIN : this.current.dir + 1);
-            var turned = false;
+        let newdir = this.current.dir;
 
-            if (this.unoccupied(this.current.type, this.current.x, this.current.y, newdir)) {
-                dir = newdir;
-                turned = true;
-            }
-        }
-        else if (DIR.TURNLEFT == dir) {
-            newdir = (this.current.dir == DIR.MIN ? DIR.MAX : this.current.dir - 1);
-            if (this.unoccupied(this.current.type, this.current.x, this.current.y, newdir)) {
-                dir = newdir;
-                turned = true;
-            }
-        }
+        if (dir == DIR.TURNRIGHT)
+            newdir++;
+        else if (dir == DIR.TURNLEFT)
+            newdir--;
+        newdir = (newdir + 4) % 4;
 
-        if (turned) {
-            this.current.dir = dir;
+        let offset = this.horizontalFitOffset(this.current.type, this.current.x, this.current.y, newdir);
+
+        if (offset[0]) {
+            this.current.x += offset[1];
+            this.current.dir = newdir;
             this.draw();
+            sound("rotate");
         }
     }
 

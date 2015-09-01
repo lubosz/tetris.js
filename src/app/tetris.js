@@ -17,7 +17,7 @@ var i =
 {
     name: 'I',
     size: 4,
-    blocks: [0x0F00, 0x2222, 0x00F0, 0x4444],
+    blocks: [0x00F0, 0x4444, 0x00F0, 0x4444],
     color: '#20c8f8' // cyan
 };
 var j =
