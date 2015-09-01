@@ -54,12 +54,14 @@ class Player extends React.Component {
             case DIR.LEFT:
             case DIR.RIGHT:
                 this.refs.court.move(action);
+                sound("move");
                 break;
             case DIR.UP:
                 this.refs.court.instantDrop();
                 break;
             case DIR.DOWN:
                 this.refs.court.drop();
+                sound("move");
                 break;
             case DIR.TURNLEFT:
             case DIR.TURNRIGHT:
@@ -79,38 +81,32 @@ class Player extends React.Component {
                     //arrow down
                     delayedPressed(idx, function () {
                         this.actions.push(DIR.DOWN);
-                        sound("move");
                     }.bind(this));
                     break;
                 case 14:
                     //arrow left
                     delayedPressed(idx, function () {
                         this.actions.push(DIR.LEFT);
-                        sound("move");
                     }.bind(this));
                     break;
                 case 15:
                     //arrow right
                     delayedPressed(idx, function () {
                         this.actions.push(DIR.RIGHT);
-                        sound("move");
                     }.bind(this));
                     break;
                 case 12:
                     //arrow up
                     this.actions.push(DIR.UP);
-                    sound("drop");
                     break;
                 case 0:
                     //x
                     this.play();
                     this.actions.push(DIR.TURNLEFT);
-                    sound("rotate");
                     break;
                 case 1:
                     //'o'
                     this.actions.push(DIR.TURNRIGHT);
-                    sound("rotate");
                     break;
                 case 5:
                     //'r1'

@@ -5,6 +5,7 @@
 import React from 'react';
 import {randomPiece, nx, ny, nu, mode, DIR, setBlock, eachblock} from '../logic';
 import {drawBlock, drawPiece} from '../renderer';
+import {sound} from '../utils';
 
 class Court extends React.Component {
     constructor(props) {
@@ -31,6 +32,7 @@ class Court extends React.Component {
     checkLose() {
         if (this.occupied(this.current.type, this.current.x, this.current.y, this.current.dir)) {
             this.lose();
+            sound("lose");
         }
     }
 //-----------------------------------------------------
@@ -179,6 +181,8 @@ class Court extends React.Component {
         });
         this.blocks = playerBlocks;
 
+        sound("drop");
+
         if (inval)
             this.draw();
 
@@ -210,6 +214,15 @@ class Court extends React.Component {
         if (n > 0) {
             this.addRows(n);
             this.addScore(100 * Math.pow(2, n - 1)); // 1: 100, 2: 200, 3: 400, 4: 800
+
+            switch (n) {
+                case 4:
+                    sound("tetris");
+                    break;
+                default:
+                    sound("line");
+                    break;
+            }
 
             //send lines to an opponent player if 2, 3 or 4 lines where removed
             if (n == 4) {
