@@ -4,7 +4,11 @@ import {timestamp, sound} from '../utils';
 import {queryGamePads, gamepadHandler} from '../gamepad';
 import _ from 'lodash';
 import {DIR} from '../logic';
-import Message from './Message'
+import Message from './Message';
+import { MenuItem, LeftNav, Styles, FloatingActionButton, FontIcon, AppBar, Toggle } from 'material-ui';
+
+let ThemeManager = new Styles.ThemeManager();
+let Colors = Styles.Colors;
 
 class Game extends React.Component {
     constructor(props) {
@@ -18,7 +22,18 @@ class Game extends React.Component {
         this.togglePause = this.togglePause.bind(this);
     }
 
+    getChildContext() {
+        return {muiTheme: ThemeManager.getCurrentTheme()};
+    }
+
+    componentWillMount() {
+        ThemeManager.setPalette({
+            accent1Color: Colors.deepOrange500
+        });
+    }
+
     componentDidMount() {
+        this.refs.leftNav.toggle();
         this.initPlayers();
         this.addEvents();
         this.players.forEach(p => {
@@ -29,18 +44,17 @@ class Game extends React.Component {
         let self = this;
 
         function frame () {
-            self.players.forEach(p => {
-                queryGamePads(p.gamepadCallback);
-            });
-
             // using requestAnimationFrame have to be able to handle large delta's caused
             // when it 'hibernates' in a background or non-visible tab
             if (!self.paused) {
+                self.players.forEach(p => {queryGamePads(p.gamepadCallback);});
                 let now = timestamp();
                 let idt = Math.min(1, (now - self.last) / 1000.0);
                 if (self.playing)
                     self.players.forEach(p => {p.update(idt)});
                 self.last = now;
+            } else {
+                self.players.forEach(p => {queryGamePads(p.gamepadCallbackPaused);});
             }
             requestAnimationFrame(frame);
         }
@@ -57,6 +71,7 @@ class Game extends React.Component {
 
     togglePause() {
         this.paused = !this.paused;
+        this.refs.leftNav.toggle();
         if (this.paused) {
             this.refs.message.setText("Paused");
             this.refs.message.show();
@@ -89,6 +104,20 @@ class Game extends React.Component {
 }
 
 
+Game.childContextTypes = {
+    muiTheme: React.PropTypes.object
+};
+
+let menuItems = [
+    { route: 'singleplayer', text: 'Marathon' },
+    {
+        type: MenuItem.Types.LINK,
+        payload: '/#/battle',
+        text: 'Battle'
+    },
+    { type: MenuItem.Types.SUBHEADER, text: 'Options' },
+];
+
 class Battle extends Game {
     constructor(props) {
         super(props);
@@ -100,9 +129,12 @@ class Battle extends Game {
             if (p != player) {
                 p.setEnd('WIN');
                 p.incrWins();
+                this.refs.message.setText("Player " + p.props.number.toString() + " Wins");
+                this.refs.message.show();
             }
         });
         this.playing = false;
+
     }
 
     initPlayers() {
@@ -145,6 +177,11 @@ class Battle extends Game {
         return (
             <div id="outer">
                 <div id="inner">
+                    <LeftNav ref="leftNav" menuItems={menuItems} menuItemClassName="Toggle" header={
+                        <FloatingActionButton mini={true} secondary={true} onTouchTap={this.togglePause} >
+                            <FontIcon className="material-icons">menu</FontIcon>
+                        </FloatingActionButton>
+                    }/>
                     <Message ref="message" />
                     <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
                     <div id="seperator" />
@@ -156,13 +193,17 @@ class Battle extends Game {
 }
 
 
+
 class Marathon extends Game {
     constructor(props) {
         super(props);
     }
+
     end(player) {
         player.setEnd('LOSE');
         this.playing = false;
+        this.refs.message.setText("Game Over");
+        this.refs.message.show();
     }
     initPlayers() {
         //player 1 KEYs: left_arrow, up_arrow, right_arrow, down_arrow, o, p, i
@@ -184,6 +225,12 @@ class Marathon extends Game {
         return (
             <div id="outer">
                 <div id="inner">
+
+                    <LeftNav ref="leftNav" menuItems={menuItems} header={
+                        <FloatingActionButton mini={true} secondary={true} onTouchTap={this.togglePause} >
+                            <FontIcon className="material-icons">menu</FontIcon>
+                        </FloatingActionButton>
+                    }/>
                     <Message ref="message" />
                     <Player number="1" name="Lubosz" background="lubosz.jpg" color="blue" ref="player1" />
                 </div>

@@ -31,6 +31,7 @@ class Player extends React.Component {
         this.refs.court.addRows = this.addRows.bind(this);
         this.refs.court.addScore = this.addScore.bind(this);
         this.gamepadCallback = this.gamepadCallback.bind(this);
+        this.gamepadCallbackPaused = this.gamepadCallbackPaused.bind(this);
         this.keyboardCallback = this.keyboardCallback.bind(this);
         music("korobeiniki-chiptune");
     }
@@ -71,6 +72,18 @@ class Player extends React.Component {
             case DIR.HOLD:
                 this.refs.hold.setHold(this.refs.court, this.refs.next);
                 break;
+        }
+    }
+
+    gamepadCallbackPaused(pad, idx, type) {
+        //console.log(pad, idx, type);
+        if (type == "pressed") {
+            switch (idx) {
+                case 9:
+                    //'options
+                    this.togglePause();
+                    break;
+            }
         }
     }
 
